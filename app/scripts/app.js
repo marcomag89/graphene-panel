@@ -70,5 +70,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   app.scrollPageToTop = function() {
     document.getElementById('mainContainer').scrollTop = 0;
   };
+  app.settings = settings;
 
+  console.log(app.settings);
 })(document);
