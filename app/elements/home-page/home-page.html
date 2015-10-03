@@ -1,0 +1,99 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="home-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      table{
+        margin-top:20px;
+        width: 100%;
+        border-collapse: collapse;
+      }
+      td,th{
+        border: 1px solid gray;
+        padding: 8px;
+      }
+      td.key{
+        font-weight: 500;
+        width: 150px;
+      }
+    </style>
+    <h2>Server status</h2>
+    <table>
+      <tr><td class="key">App name</td><td>{{status.app-name}}</td></tr>
+      <tr><td class="key">Graphene version</td><td>{{status.framework-version}}</td></tr>
+      <tr><td class="key">Server time</td><td>{{status.server.time}}</td></tr>
+      <tr><td class="key">Server doftware</td><td>{{status.server.software}}</td></tr>
+      <tr><td class="key">PHP version</td><td>{{status.php-version}}</td></tr>
+      <tr><td class="key">DB status</td><td>{{status.db.connectionStatus}}</td></tr>
+      <tr><td class="key">DB driver</td><td>{{status.db.driver}}</td></tr>
+    </table>
+
+    <h2>Installed Modules</h2>
+    <template is="dom-repeat" items="{{modules}}">
+      <h3>{{item.name}}</h3>
+        <div>
+          <table>
+            <tr><th colspan="2">Info</th></tr>
+            <tr><td class="key">Author</td><td>{{item.author}}</td></tr>
+            <tr><td class="key">Version</td><td>{{item.version}}</td></tr>
+            <tr><td class="key">Namespace</td><td>{{item.namespace}}</td></tr>
+          </table>
+          <table>
+            <tr><th colspan="3">Actions</th></tr>
+            <tr><th>Name</th><th>Url</th><th>Method</th></tr>
+            <template is="dom-repeat" items="{{item.actions}}">
+              <tr><td class="key">{{item.name}}</td><td>{{item.url}}</td><td>{{item.method}}</td></tr>
+            </template>
+          </table>
+        </div>
+    </template>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'home-page',
+      ready:function(){
+        fetch(settings.api.server+'/system/status', {
+          method: 'get',
+          headers: {
+            'api-key': settings.api.apiKey,
+            'access-token': settings.api.accessToken,
+            'Content-Type': 'application/json'
+          }})
+          .then(function(res){return res.json();})
+          .then(function(res){this.status=res.GrapheneStatus;}.bind(this));
+
+        fetch(settings.api.server+'/system/modules', {
+          method: 'get',
+          headers: {
+            'api-key': settings.api.apiKey,
+            'access-token': settings.api.accessToken,
+            'Content-Type': 'application/json'
+          }})
+          .then(function(res){return res.json();})
+          .then(function(res){this.modules=res.InstalledModules;}.bind(this));
+      },
+
+      properties: {
+        status  : {type:Object, notify:true, value:null},
+        modules : {type:Object, notify:true, value:null}
+      }
+    });
+  })();
+  </script>
+</dom-module>

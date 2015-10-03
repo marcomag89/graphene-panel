@@ -56,7 +56,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <!-- For shared styles, shared-styles.html import in elements.html -->
   <style is="custom-style" include="shared-styles"></style>
-  <script src="scripts/settings.js"></script>
+  <script>
+    var settings={
+      api:{
+        server : 'http://localhost/Graphene/api',
+        apiKey : '0f1fb8941bb494d3d595c148270e897479a6efb5c71e1',
+        accessToken:'70cf1cc5d5e3cf4239d1c2f80a1ae5f14cc5d8ed41c6847c6df4a98b8cec84d5'
+      }
+    };
+  </script>
 
 </head>
 
@@ -106,12 +114,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout">
-            <div class="app-name">Polymer Starter Kit</div>
+            <div class="app-name">Graphene toolbox alpha</div>
           </div>
 
           <!-- Application sub title -->
           <div class="bottom bottom-container center horizontal layout">
-            <div class="bottom-title paper-font-subhead">The future of the web today</div>
+            <div class="bottom-title paper-font-subhead">Smartest solution for graphene management </div>
           </div>
 
         </paper-toolbar>
