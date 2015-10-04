@@ -29,21 +29,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-weight: 500;
         width: 150px;
       }
+      div.spinner{
+        text-align: center;
+      }
     </style>
-    <h2>Server status</h2>
-    <table>
-      <tr><td class="key">App name</td><td>{{status.app-name}}</td></tr>
-      <tr><td class="key">Graphene version</td><td>{{status.framework-version}}</td></tr>
-      <tr><td class="key">Server time</td><td>{{status.server.time}}</td></tr>
-      <tr><td class="key">Server doftware</td><td>{{status.server.software}}</td></tr>
-      <tr><td class="key">PHP version</td><td>{{status.php-version}}</td></tr>
-      <tr><td class="key">DB status</td><td>{{status.db.connectionStatus}}</td></tr>
-      <tr><td class="key">DB driver</td><td>{{status.db.driver}}</td></tr>
-    </table>
+    <template is="dom-if" if="{{!loaded}}">
+      <div class="spinner">
+        <paper-spinner active="{{!loaded}}"></paper-spinner>
+      </div>
+    </template>
+    <template is="dom-if" if="{{loaded}}">
+      <h2>Server status</h2>
+      <table>
+        <tr><td class="key">App name</td><td>{{status.app-name}}</td></tr>
+        <tr><td class="key">Graphene version</td><td>{{status.framework-version}}</td></tr>
+        <tr><td class="key">Server time</td><td>{{status.server.time}}</td></tr>
+        <tr><td class="key">Server doftware</td><td>{{status.server.software}}</td></tr>
+        <tr><td class="key">PHP version</td><td>{{status.php-version}}</td></tr>
+        <tr><td class="key">DB status</td><td>{{status.db.connectionStatus}}</td></tr>
+        <tr><td class="key">DB driver</td><td>{{status.db.driver}}</td></tr>
+      </table>
 
-    <h2>Installed Modules</h2>
-    <template is="dom-repeat" items="{{modules}}">
-      <h3>{{item.name}}</h3>
+      <h2>Installed Modules</h2>
+      <template is="dom-repeat" items="{{modules}}">
+        <h3>{{item.name}}</h3>
         <div>
           <table>
             <tr><th colspan="2">Info</th></tr>
@@ -59,7 +68,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </template>
           </table>
         </div>
+      </template>
     </template>
+
   </template>
   <script>
   (function() {
@@ -89,7 +100,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           .then(function(res){this.modules=res.InstalledModules;}.bind(this));
       },
 
+      _isLoaded:function(status,modules){
+        return (status!==null && modules !==null);
+      },
+
       properties: {
+        loaded  : {type:Boolean,notify:true,  computed:'_isLoaded(status,modules)'},
         status  : {type:Object, notify:true, value:null},
         modules : {type:Object, notify:true, value:null}
       }

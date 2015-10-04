@@ -8,7 +8,8 @@
     "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
     "neon-elements": "PolymerElements/neon-elements#^1.0.0",
     "page": "visionmedia/page.js#~1.6.3",
-    "iron-collapse": "PolymerElements/iron-collapse#~1.0.3"
+    "iron-collapse": "PolymerElements/iron-collapse#~1.0.3",
+    "paper-spinner": "PolymerElements/paper-spinner#~1.0.2"
   },
   "devDependencies": {
     "web-component-tester": "*",
