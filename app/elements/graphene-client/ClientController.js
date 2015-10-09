@@ -1,9 +1,10 @@
 /**
  * Created by Marco on 08/10/15.
  */
-var ClientController = function(){
-  this._loadSettings();
 
+var ClientController = function(){
+  this.status = {loading:true};
+  this._loadSettings();
 };
 
 ClientController.prototype = {
@@ -94,7 +95,12 @@ ClientController.prototype = {
     var settingsString = localStorage.getItem(ClientController.settingsKey);
     if(settingsString !== null){
       this.settings= JSON.parse(settingsString);
-      this._checkStatus();
+      if(this.settings.selectedProfile !== null && !!this.settings.profiles[this.settings.selectedProfile]){
+        this._checkStatus();
+      }
+      else{
+        console.warn('profile: '+this.settings.selectedProfile+' not found');
+      }
     }else{
       this._saveSettings(ClientController.settingScaffolding);
     }
@@ -108,13 +114,19 @@ ClientController.prototype = {
     this.fireSettingsChanged(settings);
   },
 
+  _scheduleCheckStatus:function(){
+    if(this.chStatus !== null)clearTimeout(this.chStatus);
+    this.chStatus = setTimeout(function(){
+      this._checkStatus();
+    }.bind(this),ClientController.checkStatusInterval)
+  },
 
   _checkStatus:function(){
     fetch(this.getProfileSetting('server')+'/system/client')
       .then(function(response) {return response.json()})
       .then(function(json) {
+        this._scheduleCheckStatus();
         var info = json.ClientInfo;
-
         var status  = {
           application: info.application,
           user       : info.user,
@@ -123,29 +135,61 @@ ClientController.prototype = {
         status.loggedIn      = (info.user.mail !== null);
         status.appAuthorized = (info.application.name !== null);
         status.online        = true;
-        this.status = status;
-        this.fireClientStatusChange(this.status);
+        status.loading       = false;
+        if(this._statusHasChanged(status)){
+          this.status = status;
+          this.fireClientStatusChange(this.status);
+        }
       }.bind(this))
       .catch(function(err) {
-        console.log(err);
+        this._scheduleCheckStatus();
         var status = {};
-        status.online = false;
-        this.status = status;
-        this.fireClientStatusChange(this.status);
+        status.online  = false;
+        status.loading = false;
+        if(this._statusHasChanged(status)) {
+          this.status = status;
+          this.fireClientStatusChange(this.status);
+        }
       }.bind(this))
   },
 
+  _statusHasChanged:function(status){
+    return(JSON.stringify(this.status) !== JSON.stringify(status));
+  },
 
+  gFetch : function(service,body,method,headers){
+    var reqSettings={
+      method: 'GET',
+      headers: {
+        'Accept'       : 'application/json',
+        'Content-Type' : 'application/json',
+        'api-key'      : this.getProfileSetting('apiKey'),
+        'access-token' : this.getProfileSetting('accessToken'),
+      }
+    };
+    if(!!body)   reqSettings.method='POST';
+    if(!!method) reqSettings.method=method;
+    if(headers !== null && !!headers){
+      for(var hk in headers){
+        reqSettings.headers[hk]=headers[hk];
+      }
+    }
+    return fetch(this.getProfileSetting('server')+service,reqSettings)
+      .then(function(res){return res.json()})
+      .then(function(json){return json;})
+      .catch(function(err){return err;})
+  },
 
+  chStatus : null,
   settings : null,
   status   : null,
   clients  : []
 };
 
-ClientController.settingsKey        = 'graphene-settings';
-ClientController.settingScaffolding = {version:0, selectedProfile:'', profiles:{}};
-
-ClientController.instance           = null;
+ClientController.settingsKey         = 'graphene-settings';
+ClientController.settingScaffolding  = {version:0, selectedProfile:'', profiles:{}};
+ClientController.instance            = null;
+ClientController.checkStatusInterval = 5000;
 
 ClientController.getInstance=function(){
   if(ClientController.instance === null)

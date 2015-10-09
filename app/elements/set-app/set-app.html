@@ -11,18 +11,65 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <dom-module id="set-app">
+  <style>
+    #__debug{
+      position: fixed;
+      bottom: 0;
+      opacity: .7;
+      font-size: 0.7em;
+      font-weight: 100;
+      background-color: black;
+      color: white;
+      z-index: 9999;
+      border: 1px solid gray;
+      width: 100%;
+    }
+  </style>
   <template>
     <graphene-client id="client" on-status-change="_statusChanged"></graphene-client>
-    <template is="dom-if" if="{{_allOk}}">
-      <content></content>
+
+    <div id="__debug">
+      <ul>
+        <li>loading:         <span>{{_status.loading}}</span>       </li>
+        <li>online:          <span>{{_status.online}}</span>        </li>
+        <li>acl:             <span>{{_status.aclEnabled}}</span>    </li>
+        <li>app authorized:  <span>{{_status.appAuthorized}}</span> </li>
+        <li>user logged in:  <span>{{_status.loggedIn}}</span>      </li>
+        <li>display:         <span>{{_display}}</span>      </li>
+
+      </ul>
+    </div>
+
+    <div  id="loading" >    <content select = "[loading]">    </content> </div>
+    <div  id="allow" >      <content select = "[allow]">      </content> </div>
+    <div  id="no-network" > <content select = "[no-network]"> </content> </div>
+    <div  id="no-app" >     <content select = "[no-app]">     </content> </div>
+    <div  id="no-session" > <content select = "[no-session]"> </content> </div>
+
+<!--
+    <template is="dom-if" if="{{_status.online}}">
+      <template is="dom-if" if="{{_status.aclEnabled}}">
+        <template is="dom-if" if="{{_status.appAuthorized}}">
+          <template is="dom-if" if="{{!_status.loggedIn}}">
+            <content select="[no-session]"></content>
+          </template>
+          <template is="dom-if" if="{{_status.loggedIn}}">
+            <content select="[allow]"></content>
+          </template>
+        </template>
+        <template is="dom-if" if="{{!_status.appAuthorized}}">
+          <content select="[no-app]"></content>
+        </template>
+      </template>
+      <template is="dom-if" if="{{!_status.aclEnabled}}">
+        <content select="[allow]"></content>
+      </template>
     </template>
-    <template is="dom-if" if="{{_noSettings}}">
-      <content></content>
+
+    <template is="dom-if" if="{{!_status.online}}">
+      <content select="[no-network]"></content>
     </template>
-    <template is="dom-if" if="{{_noSession}}">
-      <content></content>
-    </template>
-    <content></content>
+    -->
   </template>
   <script>
   (function() {
@@ -30,19 +77,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
       is: 'set-app',
-      ready:function(){
+      attached:function(){
+        console.log('ready');
         this.$.client.addProfile('Graphene on localhost','http://localhost/Graphene/api','','',{});
         this.$.client.selectProfile('Graphene on localhost');
       },
 
       _statusChanged:function(event){
-        console.log(event);
+        this._status = event.detail;
+        if(this._status.online){
+          if(this._status.aclEnabled){
+            if(this._status.appAuthorized){
+              if(this._status.loggedIn){
+                this._display='allow';
+              }else{this._display='deny-no-session';}
+            }else{this._display='deny-no-app';}
+          }else{this._display='allow';}
+        } else {this._display='deny-no-network';}
+        this._refreshView();
+      },
+
+      _refreshView:function(){
+        this.$.loading.       hidden = true;
+        this.$.allow.         hidden = true;
+        this.$['no-network']. hidden = true;
+        this.$['no-app'].     hidden = true;
+        this.$['no-session']. hidden = true;
+
+        console.log(this.$[this._display]);
+        this.$[this._display].hidden = false;
       },
 
       properties: {
-        _allOk       :{type:Boolean, computed:'_isAllOK(status)'},
-        _hasSettings :{type:Boolean, computed:'_hasSettings(status)'},
-        _hasSession  :{type:Boolean, computed:'_hasSession(status)'}
+        _status :{type:Object,  value:null,      notify:true},
+        _display:{type:String,  value:'loading', notify:true}
       }
     });
   })();
