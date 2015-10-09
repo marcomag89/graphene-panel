@@ -1,0 +1,50 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="set-app">
+  <template>
+    <graphene-client id="client" on-status-change="_statusChanged"></graphene-client>
+    <template is="dom-if" if="{{_allOk}}">
+      <content></content>
+    </template>
+    <template is="dom-if" if="{{_noSettings}}">
+      <content></content>
+    </template>
+    <template is="dom-if" if="{{_noSession}}">
+      <content></content>
+    </template>
+    <content></content>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'set-app',
+      ready:function(){
+        this.$.client.addProfile('Graphene on localhost','http://localhost/Graphene/api','','',{});
+        this.$.client.selectProfile('Graphene on localhost');
+      },
+
+      _statusChanged:function(event){
+        console.log(event);
+      },
+
+      properties: {
+        _allOk       :{type:Boolean, computed:'_isAllOK(status)'},
+        _hasSettings :{type:Boolean, computed:'_hasSettings(status)'},
+        _hasSession  :{type:Boolean, computed:'_hasSession(status)'}
+      }
+    });
+  })();
+  </script>
+</dom-module>

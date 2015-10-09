@@ -10,8 +10,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <html lang="">
-
-<head>
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -56,24 +54,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <!-- For shared styles, shared-styles.html import in elements.html -->
   <style is="custom-style" include="shared-styles"></style>
-  <script>
-    var settings={
-      api:{
-        //server : 'http://localhost/Graphene/api',
-        server : 'http://swpmapi.csaitlab.eu',
-        apiKey : '0f1fb8941bb494d3d595c148270e897479a6efb5c71e1',
-        accessToken:'70cf1cc5d5e3cf4239d1c2f80a1ae5f14cc5d8ed41c6847c6df4a98b8cec84d5'
-      }
-    };
-  </script>
-
-</head>
-
+  <script src="configs/client.js"></script>
 <body unresolved class="fullbleed layout vertical">
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
+  <set-app>
+    <div no-config>
 
-    <paper-drawer-panel id="paperDrawerPanel">
+    </div>
+    <div deny>
+
+    </div>
+    <paper-drawer-panel id="paperDrawerPanel" allow>
       <!-- Drawer Scroll Header Panel -->
       <paper-scroll-header-panel drawer fixed>
 
@@ -145,7 +137,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <section data-route="user-info">
               <paper-material elevation="1">
                 <h2 class="page-title">
-                User:<span>{{params.name}}</span>
+                  User:<span>{{params.name}}</span>
                 </h2>
                 <div>This is <span>{{params.name}}</span>'s section</div>
               </paper-material>
@@ -162,6 +154,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </paper-scroll-header-panel>
     </paper-drawer-panel>
+  </set-app>
 
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
     <!--

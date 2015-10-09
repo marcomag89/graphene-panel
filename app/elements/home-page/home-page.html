@@ -38,6 +38,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-spinner active="{{!loaded}}"></paper-spinner>
       </div>
     </template>
+    <graphene-client></graphene-client>
     <template is="dom-if" if="{{loaded}}">
       <h2>Server status</h2>
       <table>
@@ -79,6 +80,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'home-page',
       ready:function(){
+        /*
         fetch(settings.api.server+'/system/status', {
           method: 'get',
           headers: {
@@ -97,7 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             'Content-Type': 'application/json'
           }})
           .then(function(res){return res.json();})
-          .then(function(res){this.modules=res.InstalledModules;}.bind(this));
+          .then(function(res){this.modules=res.InstalledModules;}.bind(this));*/
       },
 
       _isLoaded:function(status,modules){
