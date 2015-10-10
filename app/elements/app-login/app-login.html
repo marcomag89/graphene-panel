@@ -1,0 +1,103 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="app-login">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: #2d2d2d;
+        overflow: hidden;
+      }
+      .login-form{
+        width: 300px;
+        margin: auto;
+        margin-top: 30px;
+        background-color: lightgray;
+        color:#2d2d2d;
+        --paper-input-container-color:#2d2d2d;
+        --paper-input-container-focus-color:#2d2d2d;
+        --paper-input-container-input-color:#2d2d2d;
+        --paper-input-container-invalid-color:#2d2d2d;
+        padding: 40px;
+      }
+      .buttons{
+        text-align: right;
+        margin-top: 20px;
+      }
+      .app-title{
+        margin-top: 80px;
+        font-weight: 100;
+        font-size: 50px;
+        text-align: center;
+        color:white;
+      }
+      h2{
+        font-weight: 100;
+        font-size: 30px;
+        text-align: center;
+        margin: 5px;
+      }
+    </style>
+    <div>
+      <div class="app-title">
+        Graphene toolbox
+      </div>
+      <div class="login-form">
+        <graphene-client id="client"></graphene-client>
+        <h2>login</h2>
+        <paper-input id="mailField" label="email"></paper-input>
+        <paper-input id="pwdField" type="password" label="password"></paper-input>
+        <div class="buttons">
+          <paper-button on-click="_authenticate">login</paper-button>
+        </div>
+      </div>
+
+    </div>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'app-login',
+      _authenticate:function(e){
+        var mail = this.$.mailField;
+        var pwd  = this.$.pwdField;
+        if(mail.validate() && pwd.validate()){
+          this.$.client.gFetch('/auth/login',{
+            User:{
+              email:mail.value,
+              password:pwd.value
+            }
+          }).then(function(res){
+            console.log('login successful: ',res);
+          }).catch(function(err){
+            console.log('login error! ',err);
+          });
+        }
+      },
+
+      properties: {
+        foo: {
+          type: String,
+          value: 'app-login',
+          notify: true
+        }
+      }
+    });
+  })();
+  </script>
+</dom-module>

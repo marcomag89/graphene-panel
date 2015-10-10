@@ -15,6 +15,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
       :host {
         display: block;
+        --paper-input-container-color:lightgray;
+        --paper-input-container-focus-color:white;
+        --paper-input-container-input-color:white;
+        --paper-input-container-invalid-color:white;
+
       }
       table{
         margin-top:20px;
@@ -24,6 +29,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       td,th{
         border: 1px solid gray;
         padding: 8px;
+        word-wrap: break-word;
       }
       td.key{
         font-weight: 500;
@@ -32,14 +38,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       div.spinner{
         text-align: center;
       }
+      #aclNotification{
+        background-color: #CE5452;
+        padding: 10px;
+        color: white;
+        border-radius: 2px;
+      }
+
     </style>
     <template is="dom-if" if="{{!loaded}}">
       <div class="spinner">
         <paper-spinner active="{{!loaded}}"></paper-spinner>
       </div>
     </template>
-    <graphene-client id="client" on-ready="_onClientReady"></graphene-client>
+    <graphene-client id="client" on-status-change="_statusChanged" on-ready="_onClientReady"></graphene-client>
     <template is="dom-if" if="{{loaded}}">
+      <template is="dom-if" if="{{!aclEnabled}}">
+        <div id="aclNotification">
+          <h3>Acl is disabled</h3>
+          This is an open api!<br/>
+          you can enable acl launching autoconfig and creating an administrator
+          <paper-input
+            id="confMail"
+            type="mail"
+            label="email"
+            pattern="^[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+            error-message = "Email is not valid"
+            required
+            >    </paper-input>
+          <paper-input
+            id            = "confPasswd"
+            type          = "password"
+            label         = "password"
+            minlength     = "8"
+            error-message = "Password length must be more then 8 chars"
+            required
+            > </paper-input>
+
+          <paper-button on-click="_sendConfiguration">Configure</paper-button>
+        </div>
+      </template>
       <h2>Server status</h2>
       <table>
         <tr><td class="key">App name</td><td>{{status.app-name}}</td></tr>
@@ -79,29 +117,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
       is: 'home-page',
-      ready:function(){
-
-        /*
-        fetch(settings.api.server+'/system/status', {
-          method: 'get',
-          headers: {
-            'api-key': settings.api.apiKey,
-            'access-token': settings.api.accessToken,
-            'Content-Type': 'application/json'
-          }})
-          .then(function(res){return res.json();})
-          .then(function(res){this.status=res.GrapheneStatus;}.bind(this));
-
-        fetch(settings.api.server+'/system/modules', {
-          method: 'get',
-          headers: {
-            'api-key': settings.api.apiKey,
-            'access-token': settings.api.accessToken,
-            'Content-Type': 'application/json'
-          }})
-          .then(function(res){return res.json();})
-          .then(function(res){this.modules=res.InstalledModules;}.bind(this));*/
-      },
 
       _onClientReady:function(){
         console.log('Client ready');
@@ -114,11 +129,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _isLoaded:function(status,modules){
         return (status!==null && modules !==null);
       },
+      _sendConfiguration:function(e){
+        var confMail=this.querySelector('#confMail');
+        var confPass=this.querySelector('#confPasswd');
+        if(confMail.validate() && confPass.validate()){
+          console.log('config');
+          var body={Config:{admin:{email:confMail.value, password:confPass.value}}};
+          console.log(body);
+          this.$.client.gFetch('/system/config',body)
+            .then  (function(res){console.log(res)})
+            .catch (function(err){console.error(res)})
+        }else{
+          console.log('invalid');
+        }
+      },
+      _statusChanged:function(evt){
+        var status=evt.detail;
+        console.log(status);
+        this.aclEnabled = status.aclEnabled;
+      },
 
       properties: {
-        loaded  : {type:Boolean,notify:true,  computed:'_isLoaded(status,modules)'},
-        status  : {type:Object, notify:true, value:null},
-        modules : {type:Object, notify:true, value:null}
+        loaded     : {type:Boolean,notify:true,  computed:'_isLoaded(status,modules)'},
+        aclEnabled : {type:Boolean,notify:true, value:true},
+        status     : {type:Object, notify:true, value:null},
+        modules    : {type:Object, notify:true, value:null}
       }
     });
   })();

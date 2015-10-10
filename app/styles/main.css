@@ -12,3 +12,7 @@ body {
   font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #333;
 }
+set-app > div.content{
+  width: 100%;
+  height: 800%;
+}

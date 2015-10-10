@@ -27,7 +27,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </style>
   <template>
     <graphene-client id="client" on-status-change="_statusChanged"></graphene-client>
-
+<!--
     <div id="__debug">
       <ul>
         <li>loading:         <span>{{_status.loading}}</span>       </li>
@@ -39,37 +39,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       </ul>
     </div>
+-->
 
-    <div  id="loading" >    <content select = "[loading]">    </content> </div>
-    <div  id="allow" >      <content select = "[allow]">      </content> </div>
-    <div  id="no-network" > <content select = "[no-network]"> </content> </div>
-    <div  id="no-app" >     <content select = "[no-app]">     </content> </div>
-    <div  id="no-session" > <content select = "[no-session]"> </content> </div>
-
-<!--
-    <template is="dom-if" if="{{_status.online}}">
-      <template is="dom-if" if="{{_status.aclEnabled}}">
-        <template is="dom-if" if="{{_status.appAuthorized}}">
-          <template is="dom-if" if="{{!_status.loggedIn}}">
-            <content select="[no-session]"></content>
-          </template>
-          <template is="dom-if" if="{{_status.loggedIn}}">
-            <content select="[allow]"></content>
-          </template>
-        </template>
-        <template is="dom-if" if="{{!_status.appAuthorized}}">
-          <content select="[no-app]"></content>
-        </template>
-      </template>
-      <template is="dom-if" if="{{!_status.aclEnabled}}">
-        <content select="[allow]"></content>
-      </template>
-    </template>
-
-    <template is="dom-if" if="{{!_status.online}}">
-      <content select="[no-network]"></content>
-    </template>
-    -->
+    <iron-pages selected="{{_display}}" attr-for-selected="name">
+      <div name="loading" >    <content select = "[loading]">    </content> </div>
+      <div name="allow" >      <content select = "[allow]">      </content> </div>
+      <div name="no-network" > <content select = "[no-network]"> </content> </div>
+      <div name="no-app" >     <content select = "[no-app]">     </content> </div>
+      <div name="no-session" > <content select = "[no-session]"> </content> </div>
+    </iron-pages>
   </template>
   <script>
   (function() {
@@ -90,22 +68,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             if(this._status.appAuthorized){
               if(this._status.loggedIn){
                 this._display='allow';
-              }else{this._display='deny-no-session';}
-            }else{this._display='deny-no-app';}
+              }else{this._display='no-session';}
+            }else{this._display='no-app';}
           }else{this._display='allow';}
-        } else {this._display='deny-no-network';}
-        this._refreshView();
-      },
-
-      _refreshView:function(){
-        this.$.loading.       hidden = true;
-        this.$.allow.         hidden = true;
-        this.$['no-network']. hidden = true;
-        this.$['no-app'].     hidden = true;
-        this.$['no-session']. hidden = true;
-
-        console.log(this.$[this._display]);
-        this.$[this._display].hidden = false;
+        } else {this._display='no-network';}
       },
 
       properties: {

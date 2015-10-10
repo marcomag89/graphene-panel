@@ -71,7 +71,6 @@ ClientController.prototype = {
         if(!(!!tmpSettings[settingsNodes[node]])){tmpSettings[settingsNodes[node]] = {};}
         tmpSettings = tmpSettings[settingsNodes[node]];
       }else{
-        console.log('ending');
         tmpSettings[settingsNodes[node]]=value;
       }
     }
@@ -122,8 +121,7 @@ ClientController.prototype = {
   },
 
   _checkStatus:function(){
-    fetch(this.getProfileSetting('server')+'/system/client')
-      .then(function(response) {return response.json()})
+    this.gFetch('/system/client')
       .then(function(json) {
         this._scheduleCheckStatus();
         var info = json.ClientInfo;
@@ -151,6 +149,7 @@ ClientController.prototype = {
           this.fireClientStatusChange(this.status);
         }
       }.bind(this))
+
   },
 
   _statusHasChanged:function(status){
@@ -160,6 +159,7 @@ ClientController.prototype = {
   gFetch : function(service,body,method,headers){
     var reqSettings={
       method: 'GET',
+      body:JSON.stringify(body),
       headers: {
         'Accept'       : 'application/json',
         'Content-Type' : 'application/json',
@@ -175,9 +175,44 @@ ClientController.prototype = {
       }
     }
     return fetch(this.getProfileSetting('server')+service,reqSettings)
-      .then(function(res){return res.json()})
-      .then(function(json){return json;})
-      .catch(function(err){return err;})
+      .then(function(res)  {return res.json()})
+      .then(function(json) {return this._checkResponseErrors(json)}.bind(this))
+      .then(function(json) {return this._checkResponseRules(service,json)}.bind(this))
+  },
+
+  _checkResponseErrors:function(json){
+    if(!!json.error) {
+        var error = new Error(json.error.message)
+        error.json = json
+        throw error
+    }
+    else return json;
+  },
+
+  _checkResponseRules:function(service,json){
+    //Recupero informazioni da risposta
+    var settingsUpd = false;
+    switch(service){
+      case '/system/config' : {
+        settingsUpd=true;
+        console.log(json.Configuration.adminApp.apiKey);
+        this.settings.profiles[this.settings.selectedProfile].apiKey = json.Configuration.adminApp.apiKey;
+      }break;
+      case '/auth/login':{
+        settingsUpd=true;
+        this.settings.profiles[this.settings.selectedProfile].accessToken = json.Session.accessToken;
+      }break;
+      case '/auth/logout':{
+        settingsUpd=true;
+        this.settings.profiles[this.settings.selectedProfile].accessToken = '';
+      }break;
+    }
+    if(settingsUpd==true){
+      console.log('settings updated!');
+      this._saveSettings(this.settings);
+    }
+
+    return json;
   },
 
   chStatus : null,
