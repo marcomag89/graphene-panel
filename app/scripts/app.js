@@ -72,6 +72,4 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       document.getElementById('mainContainer').scrollTop = 0;
     }catch(e){}
   };
-  //app.settings = settings;
- // console.log(app.settings);
 })(document);

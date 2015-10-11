@@ -36,7 +36,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
   <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
-
   <!-- Tile icon for Win8 (144x144) -->
   <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
 
@@ -53,117 +52,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- endreplace-->
 
   <!-- For shared styles, shared-styles.html import in elements.html -->
-  <style is="custom-style" include="shared-styles"></style>
 <body unresolved class="fullbleed layout vertical">
   <span id="browser-sync-binding"></span>
-  <template is="dom-bind" id="app">
+  <template is="dom-bind">
     <set-app>
-      <div loading>
-        loading
-      </div>
-      <div  no-network>
-        application is offline
-      </div>
-      <div  no-app>
-        no application found
-      </div>
-      <div  no-session>
-        <app-login></app-login>
-      </div>
-      <div allow>
-        <paper-drawer-panel id="paperDrawerPanel">
-          <!-- Drawer Scroll Header Panel -->
-          <paper-scroll-header-panel drawer fixed>
-
-            <!-- Drawer Toolbar -->
-            <paper-toolbar id="drawerToolbar">
-              <span class="paper-font-title">Menu</span>
-            </paper-toolbar>
-
-            <!-- Drawer Content -->
-            <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-              <a data-route="home" href="/" on-click="onDataRouteClick">
-                <iron-icon icon="home"></iron-icon>
-                <span>Home</span>
-              </a>
-
-              <a data-route="users" href="/users" on-click="onDataRouteClick">
-                <iron-icon icon="account-box"></iron-icon>
-                <span>Users</span>
-              </a>
-
-              <a data-route="contact" href="/contact" on-click="onDataRouteClick">
-                <iron-icon icon="group-work"></iron-icon>
-                <span>Groups</span>
-              </a>
-            </paper-menu>
-          </paper-scroll-header-panel>
-
-          <!-- Main Area -->
-          <paper-scroll-header-panel main condenses keep-condensed-header>
-
-            <!-- Main Toolbar -->
-            <paper-toolbar id="mainToolbar" class="tall">
-              <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-              <span class="flex"></span>
-
-              <!-- Toolbar icons -->
-              <paper-icon-button icon="refresh"></paper-icon-button>
-              <paper-icon-button icon="search"></paper-icon-button>
-
-              <!-- Application name -->
-              <div class="middle middle-container center horizontal layout">
-                <div class="app-name">Graphene toolbox alpha</div>
-              </div>
-
-              <!-- Application sub title -->
-              <div class="bottom bottom-container center horizontal layout">
-                <div class="bottom-title paper-font-subhead">Smartest solution for graphene management </div>
-              </div>
-
-            </paper-toolbar>
-
-            <!-- Main Content -->
-            <div class="content">
-              <iron-pages attr-for-selected="data-route" selected="{{route}}">
-
-                <section data-route="home">
-                  <paper-material elevation="1">
-                    <home-page></home-page>
-                  </paper-material>
-                </section>
-
-                <section data-route="users">
-                  <paper-material elevation="1">
-                    <h2 class="page-title">Users</h2>
-                    <manage-users></manage-users>
-                  </paper-material>
-                </section>
-
-                <section data-route="user-info">
-                  <paper-material elevation="1">
-                    <h2 class="page-title">
-                      User:<span>{{params.name}}</span>
-                    </h2>
-                    <div>This is <span>{{params.name}}</span>'s section</div>
-                  </paper-material>
-                </section>
-
-                <section data-route="contact">
-                  <paper-material elevation="1">
-                    <h2 class="page-title">Contact</h2>
-                    <p>This is the contact section</p>
-                  </paper-material>
-                </section>
-
-              </iron-pages>
-            </div>
-          </paper-scroll-header-panel>
-        </paper-drawer-panel>
-        -->
-
-      </div>
-  </set-app>
+      <div loading>     loading                              </div>
+      <div no-network> application is offline                </div>
+      <div no-app>     no application found                  </div>
+      <div no-session> <app-login></app-login>               </div>
+      <div allow>      <app-index id="appIndex"></app-index> </div>
+    </set-app>
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
     <!--
     <paper-toast id="caching-complete"
@@ -182,7 +80,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     -->
   </template>
 
-  <!-- build:js scripts/app.js -->
+  <!-- build:js scripts/app.js --
   <script src="scripts/app.js"></script>
   <!-- endbuild-->
 </body>

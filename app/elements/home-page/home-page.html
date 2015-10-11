@@ -9,7 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="../activity-behavior/activity-behavior.html">
 <dom-module id="home-page">
   <template>
     <style>
@@ -117,18 +117,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
       is: 'home-page',
-
-      _onClientReady:function(){
-        console.log('Client ready');
-        this.$.client.gFetch('/system/status')
-          .then(function(res){this.status=res.GrapheneStatus;}.bind(this));
-        this.$.client.gFetch('/system/modules')
-          .then(function(res){this.modules=res.InstalledModules;}.bind(this));
+      behaviors:[activityBehavior],
+      onStart:function(){
+        this.$.client.gFetch('/system/status'). then(function(res){this.status  =res.GrapheneStatus;   }.bind(this));
+        this.$.client.gFetch('/system/modules').then(function(res){this.modules =res.InstalledModules; }.bind(this));
       },
-
+      onStop:function(){
+        this.modules = null;
+        this.status  = null;
+      },
       _isLoaded:function(status,modules){
         return (status!==null && modules !==null);
       },
+
       _sendConfiguration:function(e){
         var confMail=this.querySelector('#confMail');
         var confPass=this.querySelector('#confPasswd');
@@ -143,6 +144,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           console.log('invalid');
         }
       },
+
       _statusChanged:function(evt){
         var status=evt.detail;
         console.log(status);

@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../activity-behavior/activity-behavior.html">
 
 <dom-module id="manage-users">
   <template>
@@ -17,23 +18,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
       }
     </style>
-    <div>Hello from <span>{{foo}}</span></div>
+    <graphene-client id="client"></graphene-client>
+    <collection-fetcher id="fetcher"
+                        collection-result="{{result}}"
+                        base-url="{{baseUrl}}"
+                        end-element="{{endElement}}"
+      ></collection-fetcher>
+
+    <table>
+      <tr>
+        <th>id</th>
+        <th>email</th>
+      </tr>
+      <template is="dom-repeat" items="{{result}}">
+        <tr>
+          <td><a href="{{getUserUrl(item)}}">{{item.id}}</a></td>
+          <td>{{item.email}}</td>
+        </tr>
+      </template>
+    </table>
+
+    <div id="end"></div>
+
   </template>
   <script>
-  (function() {
-    'use strict';
+    (function () {
+      'use strict';
+      behaviors:[activityBehavior],
 
-    Polymer({
-      is: 'manage-users',
+        Polymer({
+          is: 'manage-users',
+          behaviors: [activityBehavior],
 
-      properties: {
-        foo: {
-          type: String,
-          value: 'manage-users',
-          notify: true
-        }
-      }
-    });
-  })();
+          onStart: function () {
+            this.endElement = this.$.end;
+            this.$.fetcher.fetch();
+          },
+
+          onParamsChange: function (newParams) {
+
+          },
+
+          onRefresh: function () {
+
+          },
+
+          getUserUrl: function (user) {
+            return 'users/' + user.id;
+          },
+
+          properties: {
+            baseUrl: {type: String, value: '/users/collection', notify: true},
+            endElement: Object,
+            result: Array
+          }
+        });
+    })();
   </script>
 </dom-module>

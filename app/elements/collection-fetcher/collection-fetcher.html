@@ -1,0 +1,132 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="collection-fetcher">
+  <template>
+    <graphene-client id="client"></graphene-client>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+        Polymer({
+          is: 'collection-fetcher',
+
+          fetch:function(){
+            console.log('fetching');
+            document.addEventListener("indexContentScroll", function(e){this._onIndexScroll(e)}.bind(this), false);
+            this.start();
+            this.loadNextPage();
+          },
+
+          start:function(){
+            this.clear();
+            this.requestQueuePush('');
+
+          },
+
+          clear:function(){
+            this.reqQueue=[];
+            this.collectionResult=[];
+            this.nxt=null;
+            this.prv=null;
+            this.cur=null
+          },
+
+          _onIndexScroll:function(e){
+            this.lastPosition=e.detail.target.scrollTop;
+            if(this.isVisibleInViewport(this.endElement,this.lastPosition)){
+              this.requestQueuePush(this.nxt);
+              this.loadNextPage();
+            }else{
+              //console.log('invisible');
+            }
+          },
+
+          isVisibleInViewport:function(elem,pageYOffset){
+            if(elem.offsetParent === null)return false;
+            var y = elem.offsetTop;
+            var height = elem.offsetHeight;
+            while ( elem = elem.offsetParent )y += elem.offsetTop;
+            var maxHeight = y + height;
+
+            var isVisible = ( y < ( pageYOffset + window.innerHeight ) ) && ( maxHeight >= window.pageYOffset );
+            return isVisible;
+          },
+
+          requestQueuePush:function(url){
+            // console.log(this.reqQueue);
+            var alreadyExists=false;
+            for(var qValue in this.reqQueue){
+              if(this.reqQueue[qValue].url === url){alreadyExists=true;}
+            }
+            if(!alreadyExists){
+              this.reqQueue.push({url:url, pull:false});
+            }
+          },
+
+          requestQueuePull:function(){
+            for(var qValue in this.reqQueue){
+              if(!this.reqQueue[qValue].pull){
+                this.reqQueue[qValue].pull=true;
+                return this.reqQueue[qValue].url
+              }
+            }
+            return null;
+          },
+          getUserUrl  : function(user){
+            return 'users/'+user.id;
+          },
+
+          loadNextPage:function(){
+            var client = this.$.client;
+            if(!this.busy){
+              var pageUrl = this.requestQueuePull();
+              if(pageUrl !== null){
+                this.busy = true;
+                console.log('fetching: '+this.baseUrl+pageUrl);
+                client.gFetch(this.baseUrl+pageUrl)
+                  .then(function(res){
+                    this.collectionResult = this.collectionResult.concat(res.Collection);
+                    if(!!res.cursor.nxt) this.nxt = res.cursor.nxt.split(this.baseUrl)[1];
+                    this.cur = res.cursor.cur.split(this.baseUrl)[1];
+                    if(!!res.cursor.prv) this.prv = res.cursor.prv.split(this.baseUrl)[1];
+                    this.busy = false;
+                  }.bind(this))
+                  .catch(function (err) {
+                    console.log(err);
+                    this.busy = false;
+                  }.bind(this))
+              }
+            }else{
+              //console.log('busy');
+            }
+          },
+
+          properties: {
+            baseUrl          : {type:String,  value:'',   notify:true},
+            collectionResult : {type:Array,   value:[],   notify:true},
+            endElement       : Object,
+
+            reqQueue     : {type:Array,   value:[], notify:true},
+            busy         : {type:Boolean, value:false},
+            pageLoaded   : {},
+            lastPosition : Number,
+            nxt          : {type:String, value:null, notify:true},
+            prv          : {type:String, value:null, notify:true},
+            cur          : {type:String, value:null, notify:true},
+            params       : Object
+          }
+        });
+    })();
+  </script>
+</dom-module>
