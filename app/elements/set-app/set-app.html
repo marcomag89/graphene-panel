@@ -63,15 +63,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _statusChanged:function(event){
         this._status = event.detail;
-        if(this._status.online){
-          if(this._status.aclEnabled){
-            if(this._status.appAuthorized){
-              if(this._status.loggedIn){
-                this._display='allow';
-              }else{this._display='no-session';}
-            }else{this._display='no-app';}
-          }else{this._display='allow';}
-        } else {this._display='no-network';}
+        if(!this._status.loading){
+          if(this._status.online){
+            if(this._status.aclEnabled){
+              if(this._status.appAuthorized){
+                if(this._status.loggedIn){
+                  this._display='allow';
+                }else{this._display='no-session';}
+              }else{this._display='no-app';}
+            }else{this._display='allow';}
+          } else {this._display='no-network';}
+        }else{
+          this._display='loading';
+        }
       },
 
       properties: {

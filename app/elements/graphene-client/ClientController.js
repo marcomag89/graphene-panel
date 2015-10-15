@@ -217,7 +217,7 @@ ClientController.prototype = {
 
   chStatus : null,
   settings : null,
-  status   : null,
+  status   : {loading: true},
   clients  : []
 };
 

@@ -15,10 +15,43 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
       this.activityId = this.tagName.toLowerCase();
       this.setAttribute('data-route',this.activityId);
       console.log('init: ' + this.activityId);
-      document.addEventListener("sys-activity-changed", function(e){ this._onActivityChange(e) }.bind(this), false);
-      document.addEventListener("sys-activity-params-changed", function(e){ this._onActivityParamsChange(e) }.bind(this), false);
+      document.addEventListener("sys-activity-changed",           function(e){ this._onActivityChange(e)          }.bind(this), false);
+      document.addEventListener("sys-activity-params-changed",    function(e){ this._onActivityParamsChange(e)    }.bind(this), false);
+      document.addEventListener("sys-application-status-changed", function(e){ this._onApplicationStatusChange(e) }.bind(this), false);
+      document.addEventListener("sys-activity-refresh",           function(e){ this._onActivityRefresh(e)         }.bind(this), false);
+    },
 
-      document.addEventListener("sys-activity-refresh", function(e){ this._onActivityRefresh(e)}.bind(this), false);
+    _onApplicationStatusChange:function(e){
+      var status= e.detail();
+      this.appStatus = status;
+      switch (status){
+        case 'loading'    :{
+          if(this.currentActivity === this.activityId) this.onStop();
+          break;
+        }
+        case 'no-session' :{
+          if(this.currentActivity === this.activityId) this.onStop();
+          break;
+        }
+        case 'no-app'     :{
+          if(this.currentActivity === this.activityId) this.onStop();
+          this.onStop();
+          break;
+        }
+        case 'no-network' :{
+          if(this.currentActivity === this.activityId) this.onStop();
+          this.onStop();
+          break;
+        }
+        case 'allow'      :{
+          if(this.currentActivity === this.activityId) this.onStart();
+          break;
+        }
+      }
+    },
+
+    _isActivityEnabled:function(){
+        return (this.appStatus==='allow' && this.currentActivity === this.activityId)
     },
 
     _onActivityRefresh:function(e){
@@ -26,9 +59,11 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
     },
 
     _onActivityChange : function(e){
-      if(e.detail.newActivity === this.activityId){this.onStart();}
-      if(e.detail.oldActivity === this.activityId){this.onStop();}
-
+      this.currentActivity = e.detail.newActivity;
+      if(this.appStatus === 'allow'){
+        if(e.detail.newActivity === this.activityId){this.onStart();}
+        if(e.detail.oldActivity === this.activityId){this.onStop(); }
+      }
     },
 
     _onActivityParamsChange:function(e){
@@ -38,14 +73,16 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
       }
     },
 
-    onStart            : function () {console.log(this.activityId+' started');},
-    onStop             : function () {console.log(this.activityId+' stopped')},
-    onRefresh          : function () {console.log(this.activityId+' refresh')},
-    onParamsChange     : function (newPars,oldPars) {console.log(this.activityId+' paramsChanged')},
+    onStart        : function () {console.log(this.activityId+' started');},
+    onStop         : function () {console.log(this.activityId+' stopped')},
+    onRefresh      : function () {console.log(this.activityId+' refresh')},
+    onParamsChange : function (newPars,oldPars) {console.log(this.activityId+' paramsChanged')},
 
     properties:{
-      activityId : String,
-      params:Object
+      activityId      : String,
+      currentActivity : String,
+      params          : Object,
+      appStatus       : String
     }
   };
 
