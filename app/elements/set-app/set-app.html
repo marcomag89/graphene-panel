@@ -55,6 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
       is: 'set-app',
+
       attached:function(){
         console.log('ready');
         this.$.client.addProfile('Graphene on localhost','http://localhost/Graphene/api','','',{});
@@ -63,6 +64,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _statusChanged:function(event){
         this._status = event.detail;
+        var oldDisplay = this._display;
         if(!this._status.loading){
           if(this._status.online){
             if(this._status.aclEnabled){
@@ -73,9 +75,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               }else{this._display='no-app';}
             }else{this._display='allow';}
           } else {this._display='no-network';}
-        }else{
+        } else {
           this._display='loading';
         }
+        var event = new CustomEvent("sys-application-status-changed", {
+          detail:{newStatus:this._display,oldStatus:oldDisplay},bubbles: true,cancelable: false});
+        document.dispatchEvent(event);
       },
 
       properties: {

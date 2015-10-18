@@ -22,207 +22,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      for further information on custom CSS properties.
      */
 
-    /* Application theme */
-
-    :root {
-      --dark-primary-color: #353535;
-      --default-primary-color: #2d2d2d;
-      --light-primary-color: #C5CAE9;
-      --text-primary-color: #ffffff; /*text/icons*/
-      --accent-color: #FF4081;
-      --primary-background-color: #c5cae9;
-      --primary-text-color: #212121;
-      --secondary-text-color: #727272;
-      --disabled-text-color: #bdbdbd;
-      --divider-color: #B6B6B6;
-
-      /* Components */
-
-      /* paper-drawer-panel */
-      --drawer-menu-color: #ffffff;
-      --drawer-border-color: 1px solid #ccc;
-      --drawer-toolbar-border-color: 1px solid rgba(0, 0, 0, 0.22);
-
-      /* paper-menu */
-      --paper-menu-background-color: #fff;
-      --menu-link-color: #111111;
-    }
-
     /* General styles */
-
     #drawerToolbar {
       color: var(--secondary-text-color);
       background-color: var(--drawer-menu-color);
       border-bottom: var(--drawer-toolbar-border-color);
     }
+    paper-material{ width: calc(98.66% - 16px);}
+    .paper-menu > .iron-selected {  color: var(--default-primary-color);  }
+    paper-menu a{  color: var(--menu-link-color);  }
 
-    paper-scroll-header-panel {
-      height: 100%;
-    }
+    @media (max-width:600px){paper-material{width: calc(97.33% - 32px);}  }
 
-    paper-material {
-      border-radius: 2px;
-      height: 100%;
-      padding: 16px 0 16px 0;
-      width: calc(98.66% - 16px);
-      margin: 16px auto;
-      background: white;
-    }
-
-    paper-menu iron-icon {
-      margin-right: 33px;
-      opacity: 0.54;
-    }
-
-    .paper-menu > .iron-selected {
-      color: var(--default-primary-color);
-    }
-
-    paper-menu a {
-      text-decoration: none;
-      color: var(--menu-link-color);
-      display: -ms-flexbox;
-      display: -webkit-flex;
-      display: flex;
-      -ms-flex-direction: row;
-      -webkit-flex-direction: row;
-      flex-direction: row;
-      -ms-flex-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      font-family: 'Roboto', 'Noto', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 24px;
-      min-height: 48px;
-      padding: 0 16px;
-    }
-
-    paper-toolbar.tall .app-name {
-      font-size: 40px;
-      font-weight: 300;
-      /* Required for main area's paper-scroll-header-panel custom condensing transformation */
-      -webkit-transform-origin: left center;
-      transform-origin: left center;
-    }
-
-    #mainToolbar .middle-container  {
-      height: 100%;
-      margin-left: 48px;
-    }
-
-    #mainToolbar:not(.tall) .middle {
-      font-size: 18px;
-      padding-bottom: 0;
-    }
-
-    #mainToolbar .bottom {
-      margin-left: 48px;
-      /* Required for main area's paper-scroll-header-panel custom condensing transformation */
-      -webkit-transform-origin: left center;
-      transform-origin: left center;
-    }
-
-    /* Height of the scroll area */
-    .content {
-      height: 900px;
-    }
-
-    /* Breakpoints */
-
-    /* Small */
-    @media (max-width: 600px) {
-
-      paper-material {
-        --menu-container-display: none;
-        width: calc(97.33% - 32px);
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-
-      paper-toolbar.tall .app-name {
-        font-size: 24px;
-        font-weight: 400;
-      }
-
-      #drawer .paper-toolbar {
-        margin-left: 16px;
-      }
-
-      #overlay {
-        min-width: 360px;
-      }
-
-      .bg {
-        background: white;
-      }
-
-    }
-
-    /* Tablet+ */
-    @media (min-width: 601px) {
-
-      paper-material {
-        width: calc(98% - 46px);
-        margin-bottom: 32px;
-        padding-left: 30px;
-        padding-right: 30px;
-      }
-
-      #drawer.paper-drawer-panel > [drawer] {
-        border-right: 1px solid rgba(0, 0, 0, 0.14);
-      }
-
-      iron-pages {
-        padding: 48px 62px;
-      }
-
-    }
-
-    /* Material Design Adaptive Breakpoints */
-    /*
-      Below you'll find CSS media queries based on the breakpoint guidance
-      published by the Material Design team. You can choose to use, customise
-      or remove these breakpoints based on your needs.
-
-      http://www.google.com/design/spec/layout/adaptive-ui.html#adaptive-ui-breakpoints
-     */
-
-    /* mobile-small */
-    @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) { }
-    /* mobile-large */
-    @media all and (min-width: 361px) and (orientation: portrait) { }
-    /* mobile-small-landscape */
-    @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
-    /* mobile-large-landscape */
-    @media all and (min-width: 481px) and (orientation: landscape) { }
-    /* tablet-small-landscape */
-    @media all and (min-width: 600px) and (max-width: 960px) and (orientation: landscape) { }
-    /* tablet-large-landscape */
-    @media all and (min-width: 961px) and (orientation: landscape) { }
-    /* tablet-small */
-    @media all and (min-width: 600px) and (orientation: portrait) { }
-    /* tablet-large */
-    @media all and (min-width: 601px) and (max-width: 840px) and (orientation : portrait) { }
-    /* desktop-x-small-landscape */
-    @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
-    /* desktop-x-small */
-    @media all and (min-width: 0) and (max-width: 480px) and (max-aspect-ratio: 4/3) { }
-    /* desktop-small-landscape */
-    @media all and (min-width: 481px) and (max-width: 840px) and (orientation: landscape) { }
-    /* desktop-small */
-    @media all and (min-width: 481px) and (max-width: 840px) and (max-aspect-ratio: 4/3) { }
-    /* desktop-medium-landscape */
-    @media all and (min-width: 841px) and (max-width: 1280px) and (orientation: landscape) { }
-    /* desktop-medium */
-    @media all and (min-width: 841px) and (max-width: 1280px) and (max-aspect-ratio: 4/3) { }
-    /* desktop-large */
-    @media all and (min-width: 1281px) and (max-width: 1600px) { }
-    /* desktop-xlarge */
-    @media all and (min-width: 1601px) and (max-width: 1920px) { }
   </style>
+  <link rel="stylesheet" href="app-index.css">
   <template>
     <paper-drawer-panel id="paperDrawerPanel">
       <!-- Drawer Scroll Header Panel -->
@@ -236,7 +49,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <!-- Drawer Content -->
 
         <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-          <template data-route="no-select-me" is="dom-repeat" items="{{menuItems}}">
+          <template  is="dom-repeat" items="{{menuItems}}">
             <a data-route$="{{item.activity}}" href$="{{item.href}}" on-click="onDataRouteClick">
               <iron-icon icon$="{{item.icon}}"></iron-icon>
               <span>{{item.name}}</span>
@@ -251,12 +64,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <!-- Main Toolbar -->
         <paper-toolbar id="mainToolbar" class="tall">
+
           <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
           <span class="flex"></span>
 
           <!-- Toolbar icons -->
-          <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="search"></paper-icon-button>
+          <paper-icon-button icon="refresh" on-click="_sendRefresh"></paper-icon-button>
+          <paper-icon-button icon="search"  on-click="_toggleSearch"></paper-icon-button>
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout">
@@ -272,27 +86,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <!-- Main Content -->
         <div class="content">
-          <iron-pages attr-for-selected="data-route"  selected="{{route}}">
-            <home-page></home-page>
-            <manage-users></manage-users>
-
-            <section data-route="user-info">
-              <paper-material elevation="1">
-                <h2 class="page-title">
-                  User:<span>{{params.name}}</span>
-                </h2>
-                <div>This is <span>{{params.name}}</span>'s section</div>
-              </paper-material>
-            </section>
-
-            <section data-route="contact">
-              <paper-material elevation="1">
-                <h2 class="page-title">Contact</h2>
-                <p>This is the contact section</p>
-              </paper-material>
-            </section>
-
-          </iron-pages>
+            <iron-pages id="activities" attr-for-selected="data-route"  selected="{{route}}">
+              <!-- activities -->
+            </iron-pages>
         </div>
       </paper-scroll-header-panel>
     </paper-drawer-panel>
@@ -305,9 +101,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'app-index',
       attached : function(){
-        this.menuItems = document.menuSettings;
-      },
+        //this.menuItems = document.menuSettings;
+        document.addEventListener("sys-activity-init", function(e){ this._onActivityInit(e)          }.bind(this), false);
 
+      },
+      _onActivityInit:function(e){
+        if(this.initActivity == null)this.initActivity=[];
+        if(
+          this.activities.indexOf(e.detail.activity) !== -1 &&
+          this.initActivity.indexOf(e.detail.activity) === -1
+
+        ){
+          this.initActivity.push(e.detail.activity);
+
+        }
+
+        if(this.initActivity.length >= this.activities.length){
+          this._fireActivityLoaded()
+        }
+      },
       _onContentScroll:function(e){
         var event = new CustomEvent("indexContentScroll", {detail: e.detail,bubbles: true,cancelable: true});
         document.dispatchEvent(event);
@@ -348,32 +160,80 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _onRouteChange:function(newValue,oldValue){
+        /*
         console.log(oldValue+'->'+newValue);
         var event = new CustomEvent("sys-activity-changed", {
           detail:{
-            newActivity:newValue,
-            oldActivity:oldValue
+            newActivity : newValue,
+            oldActivity : oldValue
           },
           bubbles: true,cancelable: true});
         document.dispatchEvent(event);
+        */
       },
 
       _onParamsChange:function(newValue,oldValue){
-        console.log(oldValue+'->'+newValue);
+       // console.log(oldValue+'->'+newValue);
+        /*
         var event = new CustomEvent("sys-activity-params-changed", {
-          detail:{
-            oldParams:newValue,
-            newParams:oldValue,
-            activity:this.route
-          },
+          detail:{newParams:newValue, oldParams:oldValue, activity:this.route},
+          bubbles: true,cancelable: true});
+        document.dispatchEvent(event);*/
+      },
+
+      _fireActivityLoaded:function(){
+        var event = new CustomEvent("sys-app-index-activity-loaded", {
+          detail:{},
           bubbles: true,cancelable: true});
         document.dispatchEvent(event);
       },
 
+      _onActivityList:function(newV,oldV){
+        for(var i in newV){
+          var elem = document.createElement(newV[i]);
+          Polymer.dom(this.$.activities).appendChild(elem);
+        }
+        console.log(this.activities);
+      },
+
+      setRoute:function(route, params){
+        //Stop old activity
+        var oldActivity = this.$$('#activities > '+this.route);
+        var newActivity = this.$$('#activities > '+route);
+
+        //se la nuova activity esiste, ma la vecchia no
+        if(!(!!oldActivity) && !!newActivity){
+          newActivity.onStart();
+          newActivity._setPars(params);
+
+        }else if(!(!!newActivity) && !!oldActivity){   //se la vecchia activity esiste, ma la nuova no
+          oldActivity.onStop();
+        }else if(
+          !!oldActivity && !!newActivity &&
+          (oldActivity.activityId !== newActivity.activityId)
+        ){ //se esistono entrambe, ma sono diverse tra loro
+          oldActivity.onStop();
+          newActivity.onStart();
+          newActivity._setPars(params);
+
+        }else if(
+          !!oldActivity && !!newActivity &&
+          (oldActivity.activityId === newActivity.activityId)
+        ){//se esistono entrambe, e sono uguali tra loro
+          newActivity._setPars(params);
+        }
+
+        this.route  = route;
+        this.params = params;
+
+      },
+
       properties:{
-        menuItems : Array,
-        route     : {type:String, observer:'_onRouteChange'},
-        params    : {type:Object, observer:'_onParamsChange'}
+        route        : {type:String, observer:'_onRouteChange'},
+        params       : {type:Object, observer:'_onParamsChange'},
+        activities   : {type:Array, observer :'_onActivityList'},
+        menuItems    : Array,
+        initActivity : Array
       }
     });
   })(document);

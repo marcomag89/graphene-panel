@@ -12,34 +12,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <script>
   window.addEventListener('WebComponentsReady', function() {
     var app = document.querySelector('app-index');
-    // We use Page.js for routing. This is a Micro
-    // client-side router inspired by the Express router
-    // More info: https://visionmedia.github.io/page.js/
-    page('/', function () {
-      app.route = 'home-page';
-      app.scrollPageToTop();
-    });
-
-    page('/users', function () {
-      app.route = 'manage-users';
-      app.scrollPageToTop();
-    });
-
-    page('/users/:name', function (data) {
-      app.route = 'manage-users';
-      app.params = data.params;
-      app.scrollPageToTop();
-    });
-
-    page('/contact', function () {
-      app.route = 'contact';
-      app.scrollPageToTop();
-    });
-
-    // add #! before urls
-    page({
-      hashbang: true
-    });
-
+    var activities = [];
+    for(var i in routing) {
+      if(activities.indexOf(routing[i].activity) === -1){
+        activities.push(routing[i].activity);
+      }
+    }
+    app.activities = activities;
   });
+
+  window.addEventListener('sys-app-index-activity-loaded',function(e){
+    var app = document.querySelector('app-index');
+    var menuItems  = [];
+    for(var i in routing){
+      if(routing[i].menu !== undefined ){
+        menuItems.push({
+          activity:routing[i].activity,
+          href:routing[i].menu,
+          icon:routing[i].icon,
+          name:routing[i].title
+        })
+      }
+
+      page(routing[i].path, function (data) {
+        app.setRoute(this.activity,data.params);
+        //app.route  = this.activity;
+        //app.params = data.params;
+        app.scrollPageToTop();
+      }.bind(routing[i]));
+    }
+    // add #! before urls
+    page({hashbang: true});
+    app.menuItems  = menuItems;
+
+  })
 </script>

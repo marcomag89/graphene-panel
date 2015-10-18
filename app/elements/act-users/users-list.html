@@ -11,7 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../activity-behavior/activity-behavior.html">
 
-<dom-module id="manage-users">
+<dom-module id="users-list">
   <template>
     <style>
       :host {
@@ -19,21 +19,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <graphene-client id="client"></graphene-client>
-    <collection-fetcher id="fetcher"
-                        collection-result="{{result}}"
-                        base-url="{{baseUrl}}"
-                        end-element="{{endElement}}"
+    <collection-fetcher
+      id="fetcher"
+      collection-result="{{result}}"
+      base-url="{{baseUrl}}"
+      end-element="{{endElement}}"
+      sort-by="{{}}"
+      sort-mode="{{}}"
+      search="{{}}"
       ></collection-fetcher>
 
     <table>
-      <tr>
-        <th>id</th>
-        <th>email</th>
-      </tr>
+      <tr><th>email</th><th>actions</th></tr>
       <template is="dom-repeat" items="{{result}}">
         <tr>
-          <td><a href="{{getUserUrl(item)}}">{{item.id}}</a></td>
-          <td>{{item.email}}</td>
+          <td><a href="{{getUserUrl(item.User)}}">{{item.User.email}}</a></td>
+          <td>delete,edit</td>
         </tr>
       </template>
     </table>
@@ -44,33 +45,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
     (function () {
       'use strict';
-      behaviors:[activityBehavior],
-
         Polymer({
-          is: 'manage-users',
-          behaviors: [activityBehavior],
+          is: 'users-list',
 
           onStart: function () {
             this.endElement = this.$.end;
             this.$.fetcher.fetch();
           },
-
-          onParamsChange: function (newParams) {
-
+          onStop:function(){
+            this.result = [];
+          },
+          _onResult:function(newValue){
+            console.log(newValue)
           },
 
           onRefresh: function () {
+            this.$.fetcher.clear();
+          },
+
+          onParChange:function(){
 
           },
 
           getUserUrl: function (user) {
-            return 'users/' + user.id;
+            return 'users/view/' + user.id;
           },
 
           properties: {
             baseUrl: {type: String, value: '/users/collection', notify: true},
             endElement: Object,
-            result: Array
+            result : {type: Array, observer:'_onResult'}
           }
         });
     })();
