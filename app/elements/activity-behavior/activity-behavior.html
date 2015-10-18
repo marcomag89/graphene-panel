@@ -74,6 +74,7 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
     onStart        : function () {console.log(this.activityId+' started');},
     onStop         : function () {console.log(this.activityId+' stopped')},
     onRefresh      : function () {console.log(this.activityId+' refresh')},
+    onSearch       : function (q) {console.log(this.activityId+' search: '+q)},
     onParamsChange : function (newPars,oldPars) {console.log(this.activityId+' paramsChanged')},
 
     properties:{

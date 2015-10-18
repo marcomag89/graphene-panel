@@ -13,24 +13,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="users-list">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <graphene-client id="client"></graphene-client>
     <collection-fetcher
       id="fetcher"
-      collection-result="{{result}}"
-      base-url="{{baseUrl}}"
-      end-element="{{endElement}}"
-      sort-by="{{}}"
-      sort-mode="{{}}"
-      search="{{}}"
+      result       = "{{result}}"
+      base-url     = "{{baseUrl}}"
+      end-element  = "{{endElement}}"
+      sort-by      = "{{sortBy}}"
+      sort-mode    = "{{sortMode}}"
+      search-query = "{{searchQuery}}"
+      page-size    = "20"
+      auto
       ></collection-fetcher>
 
     <table>
-      <tr><th>email</th><th>actions</th></tr>
+      <tr><th on-click="_sortByEmail">email</th><th>actions</th></tr>
       <template is="dom-repeat" items="{{result}}">
         <tr>
           <td><a href="{{getUserUrl(item.User)}}">{{item.User.email}}</a></td>
@@ -56,24 +52,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.result = [];
           },
           _onResult:function(newValue){
-            console.log(newValue)
+           // console.log(newValue)
           },
 
           onRefresh: function () {
             this.$.fetcher.clear();
+            this.$.fetcher.fetch();
           },
 
           onParChange:function(){
 
           },
 
+          _sortByEmail:function(){
+            console.log('sorting by email');
+            if(this.sortBy === 'email'){
+              if(this.sortMode === 'ASC'){this.sortMode ='DSC'}
+              else{this.sortMode='ASC'}
+            }else{
+              this.sortBy   = 'email';
+              this.sortMode='ASC'
+            }
+          },
+          onSearch:function(q){
+            this.searchQuery=q;
+          },
           getUserUrl: function (user) {
             return 'users/view/' + user.id;
           },
 
           properties: {
             baseUrl: {type: String, value: '/users/collection', notify: true},
-            endElement: Object,
+            endElement  : Object,
+            sortBy      : String,
+            sortMode    : String,
+            searchQuery : String,
+            pageSize    : String,
             result : {type: Array, observer:'_onResult'}
           }
         });

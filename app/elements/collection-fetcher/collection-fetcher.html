@@ -29,14 +29,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
 
           start:function(){
+            this._launched = true;
             this.clear();
-            this.requestQueuePush('');
-
+            var paging='';
+            if(!!this.pageSize && (this.pageSize % 1 == 0)){
+              paging+='/1/'+this.pageSize;
+            }
+            var settings='';
+            if(!!this.sortBy && this.sortBy !==''){
+              settings+='sortBy='+this.sortBy;
+              if(this.sortMode.toUpperCase() === 'DSC'){settings+='&sortMode='+'DSC'}
+              else{settings+='&sortMode='+'ASC'}
+            }
+            console.log(this.search);
+            if(!!this.searchQuery && this.searchQuery !==''){
+              if(settings.length > 0)settings+='&';
+              settings+='search='+this.searchQuery;
+            }
+            if(settings.length >0)settings='?'+settings;
+            this.requestQueuePush(''+paging+encodeURI(settings));
           },
 
           clear:function(){
             this.reqQueue=[];
-            this.collectionResult=[];
+            this.result=[];
             this.nxt=null;
             this.prv=null;
             this.cur=null
@@ -54,7 +70,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           isVisibleInViewport:function(elem,pageYOffset){
             if(elem.offsetParent === null)return false;
-            var y = elem.offsetTop;
+            var panic=window.innerHeight/2;//il panico scatta quando metà della finestra e stata esplorata
+            var y = elem.offsetTop-panic;
             var height = elem.offsetHeight;
             while ( elem = elem.offsetParent )y += elem.offsetTop;
             var maxHeight = y + height;
@@ -83,9 +100,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             return null;
           },
-          getUserUrl  : function(user){
-            return 'users/'+user.id;
-          },
 
           loadNextPage:function(){
             var client = this.$.client;
@@ -96,35 +110,50 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 console.log('fetching: '+this.baseUrl+pageUrl);
                 client.gFetch(this.baseUrl+pageUrl)
                   .then(function(res){
-                    this.collectionResult = this.collectionResult.concat(res.Collection);
+                    this.result = this.result.concat(res.Collection);
                     if(!!res.cursor.nxt) this.nxt = res.cursor.nxt.split(this.baseUrl)[1];
                     this.cur = res.cursor.cur.split(this.baseUrl)[1];
                     if(!!res.cursor.prv) this.prv = res.cursor.prv.split(this.baseUrl)[1];
                     this.busy = false;
                   }.bind(this))
                   .catch(function (err) {
-                    console.log(err);
                     this.busy = false;
+                    console.error(err);
                   }.bind(this))
               }
-            }else{
-              //console.log('busy');
+            }
+          },
+
+          _settingsChanged:function(){
+            if(this.auto && this._launched){
+              this.start();
+              this.loadNextPage();
             }
           },
 
           properties: {
-            baseUrl          : {type:String,  value:'',   notify:true},
-            collectionResult : {type:Array,   value:[],   notify:true},
-            endElement       : Object,
+            baseUrl      : {type:String,  value:'',    observer:'_settingsChanged' },
+            sortBy       : {type:String,  value:'',    observer:'_settingsChanged'},
+            sortMode     : {type:String,  value:'',    observer:'_settingsChanged'},
+            pageSize     : {type:Number,  value:'',    observer:'_settingsChanged'},
+            searchQuery  : {type:String,  value:'',    observer:'_settingsChanged'},
+            auto         : {type:Boolean, value:false, observer:'_settingsChanged'},
 
+            result       : {type:Array,   value:[],   notify:true },
+
+            //Fetching monitor
+            _launched    : {type:Boolean, value:false},
             reqQueue     : {type:Array,   value:[], notify:true},
             busy         : {type:Boolean, value:false},
-            pageLoaded   : {},
-            lastPosition : Number,
+            endElement   : Object,
+
+            //Cursor information
             nxt          : {type:String, value:null, notify:true},
             prv          : {type:String, value:null, notify:true},
             cur          : {type:String, value:null, notify:true},
-            params       : Object
+            pageLoaded   : {},
+            lastPosition : Number,
+            panic        : {type:Number,value:600}
           }
         });
     })();

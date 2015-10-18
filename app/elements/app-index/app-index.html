@@ -28,6 +28,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       background-color: var(--drawer-menu-color);
       border-bottom: var(--drawer-toolbar-border-color);
     }
+    .searchBar{background-color: var(--secondary-text-color);}
+    .searchBar input{color: var(--text-primary-color);}
+
     paper-material{ width: calc(98.66% - 16px);}
     .paper-menu > .iron-selected {  color: var(--default-primary-color);  }
     paper-menu a{  color: var(--menu-link-color);  }
@@ -66,11 +69,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-toolbar id="mainToolbar" class="tall">
 
           <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-          <span class="flex"></span>
+          <div class="flex">
+            <template is="dom-if" if="{{searchVisible}}">
+              <div class=" searchBar horizontal layout">
+                <div class="flex">
+                  <input  is="iron-input" bind-value="{{searchValue}}">
+                </div>
+                <paper-icon-button icon="clear"  on-click="_clearSearch"></paper-icon-button>
+              </div>
+            </template>
+          </div>
 
           <!-- Toolbar icons -->
-          <paper-icon-button icon="refresh" on-click="_sendRefresh"></paper-icon-button>
-          <paper-icon-button icon="search"  on-click="_toggleSearch"></paper-icon-button>
+
+          <template is="dom-if" if="{{!searchVisible}}">
+            <paper-icon-button icon="search"  on-click="_toggleSearch"></paper-icon-button>
+            <paper-icon-button icon="refresh" on-click="_sendRefresh"></paper-icon-button>
+          </template>
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout">
@@ -105,6 +120,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         document.addEventListener("sys-activity-init", function(e){ this._onActivityInit(e)          }.bind(this), false);
 
       },
+      _sendRefresh:function(){
+        this.currentActivity.onRefresh();
+      },
+
+      _toggleSearch:function(){
+        if(!this.searchVisible)this.scrollPageToTop();
+        this.searchVisible=!this.searchVisible;
+      },
+
+      _clearSearch:function(){
+        this.searchValue='';
+        this.searchVisible=false;
+      },
+
       _onActivityInit:function(e){
         if(this.initActivity == null)this.initActivity=[];
         if(
@@ -138,6 +167,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         Polymer.Base.transform('translate3d(0,' + yRatio * 100 + '%,0)', middleContainer);
         Polymer.Base.transform('scale(' + scaleBottom + ') translateZ(0)', bottomContainer);
         Polymer.Base.transform('scale(' + scaleMiddle + ') translateZ(0)', appName);
+        if(detail.y > 20){
+          this.searchVisible=false;
+        }
       },
 
       displayInstalledToast : function() {
@@ -159,28 +191,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         try{document.getElementById('mainContainer').scrollTop = 0;}catch(e){}
       },
 
-      _onRouteChange:function(newValue,oldValue){
-        /*
-        console.log(oldValue+'->'+newValue);
-        var event = new CustomEvent("sys-activity-changed", {
-          detail:{
-            newActivity : newValue,
-            oldActivity : oldValue
-          },
-          bubbles: true,cancelable: true});
-        document.dispatchEvent(event);
-        */
-      },
-
-      _onParamsChange:function(newValue,oldValue){
-       // console.log(oldValue+'->'+newValue);
-        /*
-        var event = new CustomEvent("sys-activity-params-changed", {
-          detail:{newParams:newValue, oldParams:oldValue, activity:this.route},
-          bubbles: true,cancelable: true});
-        document.dispatchEvent(event);*/
-      },
-
       _fireActivityLoaded:function(){
         var event = new CustomEvent("sys-app-index-activity-loaded", {
           detail:{},
@@ -200,9 +210,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         //Stop old activity
         var oldActivity = this.$$('#activities > '+this.route);
         var newActivity = this.$$('#activities > '+route);
-
+        this.currentActivity=newActivity;
         //se la nuova activity esiste, ma la vecchia no
         if(!(!!oldActivity) && !!newActivity){
+          this._clearSearch();
           newActivity.onStart();
           newActivity._setPars(params);
 
@@ -212,10 +223,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           !!oldActivity && !!newActivity &&
           (oldActivity.activityId !== newActivity.activityId)
         ){ //se esistono entrambe, ma sono diverse tra loro
+          this._clearSearch();
           oldActivity.onStop();
           newActivity.onStart();
           newActivity._setPars(params);
-
         }else if(
           !!oldActivity && !!newActivity &&
           (oldActivity.activityId === newActivity.activityId)
@@ -228,12 +239,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
 
+      _onSearchValueChange:function(n){
+        clearTimeout(this._lastSearch);
+        this._lastSearch = setTimeout(
+          function(){
+              this.currentActivity.onSearch(n);
+          }.bind(this),600);
+      },
+
       properties:{
-        route        : {type:String, observer:'_onRouteChange'},
-        params       : {type:Object, observer:'_onParamsChange'},
-        activities   : {type:Array, observer :'_onActivityList'},
-        menuItems    : Array,
-        initActivity : Array
+        route           : {type:String },
+        params          : {type:Object},
+        searchValue     : {type:String, observer:'_onSearchValueChange'},
+        activities      : {type:Array,  observer :'_onActivityList'},
+        searchVisible   : {type:Boolean, value:false},
+        currentActivity : Object,
+        menuItems       : Array,
+        initActivity    : Array,
+        _lastSearch     : Object
       }
     });
   })(document);

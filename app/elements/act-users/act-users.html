@@ -69,9 +69,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.onStart();
             console.log('user changed: ',newParams);
           },
-
+          onSearch:function(q){
+            this.selected.onSearch(q);
+          },
           onRefresh: function () {
-
+            this.selected.onRefresh();
           },
 
           properties: {
