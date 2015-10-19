@@ -8,19 +8,29 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
 
   var activityBehavior = {
 
-
     attached:function(){
       this._init();
     },
 
     _init:function(){
-      this.activityId = this.tagName.toLowerCase();
+      this.getIdentifier();
       this.setAttribute('data-route',this.activityId);
-      console.log('init: ' + this.activityId);
-      document.addEventListener("sys-application-status-changed", function(e){ this._onApplicationStatusChange(e) }.bind(this), false);
+      //console.log('init: ' + this.activityId);
+      document.addEventListener("sys-application-status-changed", function(e){this._onApplicationStatusChange(e) }.bind(this), false);
       this.onInit();
       this._fireActivityInit();
 
+    },
+
+    getIdentifier:function(){
+      if(!(!!this.activityId)){
+        this.activityId = this.tagName.toLowerCase();
+        //console.log(this.settings);
+        if(!!this.settings && !!this.settings.postfix){
+          this.activityId+='-'+this.settings.postfix.toLowerCase();
+        }
+      }
+      return this.activityId;
     },
 
     _fireActivityInit:function(){
@@ -34,55 +44,39 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
       var status= e.detail.newStatus;
       this.appStatus = status;
       switch (status){
-        case 'loading'    :{
-          if(this.currentActivity === this.activityId) this.onStop();
-          break;
-        }
-        case 'no-session' :{
-          if(this.currentActivity === this.activityId) this.onStop();
-          break;
-        }
-        case 'no-app'     :{
-          if(this.currentActivity === this.activityId) this.onStop();
-          this.onStop();
-          break;
-        }
-        case 'no-network' :{
-          if(this.currentActivity === this.activityId) this.onStop();
-          this.onStop();
-          break;
-        }
-        case 'allow'      :{
-          if(this.currentActivity === this.activityId) this.onStart();
-          break;
-        }
+        case 'loading'    :{ if(this.currentActivity === this.activityId) this.onStop();  break; }
+        case 'no-session' :{ if(this.currentActivity === this.activityId) this.onStop();  break; }
+        case 'no-app'     :{ if(this.currentActivity === this.activityId) this.onStop();  this.onStop(); break;}
+        case 'no-network' :{ if(this.currentActivity === this.activityId) this.onStop();  this.onStop(); break;}
+        case 'allow'      :{ if(this.currentActivity === this.activityId) this.onStart(); break; }
       }
     },
 
     _isActivityEnabled:function(){
-        return (this.appStatus==='allow' && this.currentActivity === this.activityId)
+        return (this.appStatus==='allow' && this.currentActivity === this.activityId);
     },
 
 
     _setPars : function(pars){
       this.params = pars;
-      this.onParamsChange(pars,pars);
+      this.onParamsChange(pars);
       //console.log('%s params changed: %O',this.activityId, this.params);
     },
 
-    onInit         : function () {console.log(this.activityId+' initialized');},
-    onStart        : function () {console.log(this.activityId+' started');},
-    onStop         : function () {console.log(this.activityId+' stopped')},
-    onRefresh      : function () {console.log(this.activityId+' refresh')},
-    onSearch       : function (q) {console.log(this.activityId+' search: '+q)},
-    onParamsChange : function (newPars,oldPars) {console.log(this.activityId+' paramsChanged')},
+    onInit         : function () {/*console.log(this.getIdentifier()+' initialized');*/},
+    onStart        : function () {/*console.log(this.getIdentifier()+' started');*/},
+    onStop         : function () {/*console.log(this.getIdentifier()+' stopped');*/},
+    onRefresh      : function () {/*console.log(this.getIdentifier()+' refresh');*/},
+    onSearch       : function (q) {/*console.log(this.getIdentifier()+' search: '+q)*/},
+    onParamsChange : function (newPars) {/*console.log(this.activityId+' paramsChanged: %O',newPars)*/},
 
     properties:{
       isActivity      : {type:Boolean, value:true},
       activityId      : String,
       currentActivity : String,
       params          : Object,
-      appStatus       : String
+      appStatus       : String,
+      settings        : Object
     }
   };
 

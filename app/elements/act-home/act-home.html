@@ -54,7 +54,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-spinner active="{{!loaded}}"></paper-spinner>
       </div>
     </template>
-    <graphene-client id="client" on-status-change="_statusChanged" on-ready="_onClientReady"></graphene-client>
+    <graphene-client id="client" ></graphene-client>
     <template is="dom-if" if="{{loaded}}">
       <template is="dom-if" if="{{!aclEnabled}}">
         <div id="aclNotification">

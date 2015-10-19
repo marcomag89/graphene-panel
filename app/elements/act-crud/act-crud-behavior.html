@@ -6,8 +6,7 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
 
 <script>
 
-  var actCrudBehavior = {
-    behaviors:[activityBehavior],
+  var actCrudBehaviorImpl= {
 
     onInit:function(){
       this.listView   = this.$$('[list]');
@@ -20,18 +19,16 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
     onRefresh: function ()  { try{this.selected.onRefresh();} catch(ex){}},
 
     onParamsChange: function (newParams) {
-      this.onStop();
+      //this.onStop();
       if(!!newParams){
-        if(newParams.mode === 'list')   {this.setView('list');   }
-        else if(newParams.mode === 'create') {this.setView('single'); }
-        else if(newParams.mode === 'view' || newParams.mode === 'edit'){
+        if      (newParams.mode === 'list')   {this.setView('list');   }
+        else if (newParams.mode === 'create') {this.setView('single'); }
+        else if (newParams.mode === 'view' || newParams.mode === 'edit'){
           this.setView('single');
           this.selected.loadItem(newParams.par);
         }
       } else{ this.setView('list');}
-
       this.onStart();
-      console.log('par changed: ',newParams);
     },
 
     setView:function(view) {
@@ -53,4 +50,5 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
     }
   };
 
+var actCrudBehavior = [activityBehavior,actCrudBehaviorImpl]
 </script>

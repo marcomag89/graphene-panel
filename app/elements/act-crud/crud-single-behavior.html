@@ -1,0 +1,22 @@
+<!--
+COMPORTAMENTO ACTIVITY
+Definisce l'interfaccia ed un comportamento di un activity vuota
+
+-->
+
+<script>
+
+  var crudSingleBehaviorImpl= {
+    loadItem:function(id){
+      this.$.client.gFetch('/users/user/'+id)
+        .then(function(res){
+          this.model=res.User;
+        }.bind(this));
+    },
+    properties:{
+      model:Object
+    }
+  };
+
+  var crudSingleBehavior = [activityBehavior,crudSingleBehaviorImpl]
+</script>

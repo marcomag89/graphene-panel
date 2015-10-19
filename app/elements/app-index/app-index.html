@@ -24,12 +24,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     /* General styles */
     #drawerToolbar {
-      color: var(--secondary-text-color);
-      background-color: var(--drawer-menu-color);
-      border-bottom: var(--drawer-toolbar-border-color);
+      color:             var(--secondary-text-color);
+      background-color:  var(--drawer-menu-color);
+      border-bottom:     var(--drawer-toolbar-border-color);
     }
     .searchBar{background-color: var(--secondary-text-color);}
-    .searchBar input{color: var(--text-primary-color);}
+    .searchBar input{color:      var(--text-primary-color);}
 
     paper-material{ width: calc(98.66% - 16px);}
     .paper-menu > .iron-selected {  color: var(--default-primary-color);  }
@@ -141,19 +141,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _onActivityInit:function(e){
         if(this.initActivity == null)this.initActivity=[];
-        if(
-          this.activities.indexOf(e.detail.activity) !== -1 &&
-          this.initActivity.indexOf(e.detail.activity) === -1
-
-        ){
-          this.initActivity.push(e.detail.activity);
-
-        }
-
-        if(this.initActivity.length >= this.activities.length){
+        if(this.regActivities.indexOf(e.detail.activity) !== -1 && this.initActivity.indexOf(e.detail.activity) === -1){
+          this.initActivity.push(e.detail.activity);}
+        if(this.initActivity.length >= this.regActivities.length){
           this._fireActivityLoaded()
         }
       },
+
       _onContentScroll:function(e){
         var event = new CustomEvent("indexContentScroll", {detail: e.detail,bubbles: true,cancelable: true});
         document.dispatchEvent(event);
@@ -204,24 +198,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _onActivityList:function(newV,oldV){
+        this.regActivities=[];
         for(var i in newV){
-          var elem = document.createElement(newV[i]);
+          var elem = document.createElement(newV[i].name);
+          elem.settings=newV[i].settings;
+          this.regActivities.push(elem.getIdentifier());
           Polymer.dom(this.$.activities).appendChild(elem);
         }
-        console.log(this.activities);
       },
 
       setRoute:function(route, params){
-        //Stop old activity
-        var oldActivity = this.$$('#activities > '+this.route);
-        var newActivity = this.$$('#activities > '+route);
+        var oldSelector = '#activities > [data-route='+this.route+']';
+        var newSelector = '#activities > [data-route='+route+']';
+        var oldActivity = document.querySelector(oldSelector);
+        var newActivity = document.querySelector(newSelector);
+
         this.currentActivity=newActivity;
         //se la nuova activity esiste, ma la vecchia no
         if(!(!!oldActivity) && !!newActivity){
           this._clearSearch();
           newActivity.onStart();
           newActivity._setPars(params);
-
         }else if(!(!!newActivity) && !!oldActivity){   //se la vecchia activity esiste, ma la nuova no
           oldActivity.onStop();
         }else if(
@@ -241,14 +238,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         this.route  = route;
         this.params = params;
-
       },
 
       _onSearchValueChange:function(n){
         clearTimeout(this._lastSearch);
         this._lastSearch = setTimeout(
           function(){
-              this.currentActivity.onSearch(n);
+             try{ this.currentActivity.onSearch(n);}
+             catch(e){}
           }.bind(this),600);
       },
 
@@ -257,12 +254,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         params          : {type:Object},
         searchValue     : {type:String, observer:'_onSearchValueChange'},
         activities      : {type:Array,  observer :'_onActivityList'},
+        regActivities   : {type:Array},
         searchVisible   : {type:Boolean, value:false},
         currentActivity : Object,
         menuItems       : Array,
         initActivity    : Array,
         _lastSearch     : Object
       }
+
     });
   })(document);
   </script>

@@ -195,7 +195,7 @@ ClientController.prototype = {
     switch(service){
       case '/system/config' : {
         settingsUpd=true;
-        console.log(json.Configuration.adminApp.apiKey);
+        //console.log(json.Configuration.adminApp.apiKey);
         this.settings.profiles[this.settings.selectedProfile].apiKey = json.Configuration.adminApp.apiKey;
       }break;
       case '/auth/login':{
@@ -208,7 +208,7 @@ ClientController.prototype = {
       }break;
     }
     if(settingsUpd==true){
-      console.log('settings updated!');
+      //console.log('settings updated!');
       this._saveSettings(this.settings);
     }
 

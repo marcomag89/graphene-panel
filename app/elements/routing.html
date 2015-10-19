@@ -14,8 +14,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     var app = document.querySelector('app-index');
     var activities = [];
     for(var i in routing) {
+      var postfix='';
+      var prefix='';
+      if(!!routing[i].settings){
+        if(!!routing[i].settings.postfix){postfix = '-'+routing[i].settings.postfix;}
+        if(!!routing[i].settings.prefix) {prefix  = routing[i].settings.prefix+'-';}
+      }
+      routing[i].dataRoute = prefix+routing[i].activity+postfix;
+
       if(activities.indexOf(routing[i].activity) === -1){
-        activities.push(routing[i].activity);
+        activities.push({name:routing[i].activity, settings:routing[i].settings});
       }
     }
     app.activities = activities;
@@ -27,17 +35,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     for(var i in routing){
       if(routing[i].menu !== undefined ){
         menuItems.push({
-          activity:routing[i].activity,
-          href:routing[i].menu,
-          icon:routing[i].icon,
-          name:routing[i].title
+          activity : routing[i].dataRoute,
+          href     : routing[i].menu,
+          icon     : routing[i].icon,
+          name     : routing[i].title
         })
       }
 
       page(routing[i].path, function (data) {
-        app.setRoute(this.activity,data.params);
-        //app.route  = this.activity;
-        //app.params = data.params;
+        app.setRoute(this.dataRoute,data.params);
         app.scrollPageToTop();
       }.bind(routing[i]));
     }
