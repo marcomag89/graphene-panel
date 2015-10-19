@@ -24,6 +24,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       border: 1px solid gray;
       width: 100%;
     }
+    iron-pages{
+      padding: 0px;
+    }
   </style>
   <template>
     <graphene-client id="client" on-status-change="_statusChanged"></graphene-client>
@@ -60,7 +63,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log('ready');
         this.$.client.addProfile('Graphene on localhost','http://localhost/Graphene/api','','',{});
         this.$.client.addProfile('Graphene on remote','http://192.168.1.101/Graphene/api','','',{});
-        this.$.client.selectProfile('Graphene on remote');
+        this.$.client.selectProfile('Graphene on localhost');
       },
 
       _statusChanged:function(event){
