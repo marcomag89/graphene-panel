@@ -1,0 +1,56 @@
+<!--
+COMPORTAMENTO ACTIVITY
+Definisce l'interfaccia ed un comportamento di un activity vuota
+
+-->
+
+<script>
+
+  var actCrudBehavior = {
+    behaviors:[activityBehavior],
+
+    onInit:function(){
+      this.listView   = this.$$('[list]');
+      this.singleView = this.$$('[single]');
+    },
+
+    onStart  : function ()  { try{this.selected.onStart();  } catch(ex){}},
+    onStop   : function ()  { try{this.selected.onStop();   } catch(ex){}},
+    onSearch : function (q) { try{this.selected.onSearch(q);} catch(ex){}},
+    onRefresh: function ()  { try{this.selected.onRefresh();} catch(ex){}},
+
+    onParamsChange: function (newParams) {
+      this.onStop();
+      if(!!newParams){
+        if(newParams.mode === 'list')   {this.setView('list');   }
+        else if(newParams.mode === 'create') {this.setView('single'); }
+        else if(newParams.mode === 'view' || newParams.mode === 'edit'){
+          this.setView('single');
+          this.selected.loadItem(newParams.par);
+        }
+      } else{ this.setView('list');}
+
+      this.onStart();
+      console.log('par changed: ',newParams);
+    },
+
+    setView:function(view) {
+      if(view === 'single') {
+        this.selected = this.singleView;
+        this.singleView.removeAttribute('hidden');
+        this.listView.setAttribute('hidden',true);
+      }else {
+        this.selected = this.listView;
+        this.listView.removeAttribute('hidden');
+        this.singleView.setAttribute('hidden',true);
+      }
+    },
+
+    properties: {
+      listView    : Object,
+      singleView  : Object,
+      selected    : Object
+    }
+  };
+
+</script>

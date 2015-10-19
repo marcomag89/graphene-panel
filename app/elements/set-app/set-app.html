@@ -59,7 +59,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       attached:function(){
         console.log('ready');
         this.$.client.addProfile('Graphene on localhost','http://localhost/Graphene/api','','',{});
-        this.$.client.selectProfile('Graphene on localhost');
+        this.$.client.addProfile('Graphene on remote','http://192.168.1.101/Graphene/api','','',{});
+        this.$.client.selectProfile('Graphene on remote');
       },
 
       _statusChanged:function(event){

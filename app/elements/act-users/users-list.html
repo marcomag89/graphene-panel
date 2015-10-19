@@ -26,7 +26,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ></collection-fetcher>
 
     <table>
-      <tr><th on-click="_sortByEmail">email</th><th>actions</th></tr>
+      <tr><th field="email" on-click="_sortByMe">email</th><th>actions</th></tr>
       <template is="dom-repeat" items="{{result}}">
         <tr>
           <td><a href="{{getUserUrl(item.User)}}">{{item.User.email}}</a></td>
@@ -63,14 +63,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           onParChange:function(){
 
           },
-
-          _sortByEmail:function(){
-            console.log('sorting by email');
-            if(this.sortBy === 'email'){
+          _sortByMe:function(e){
+            console.log(e.target);
+            var t= e.target.getAttribute('field');
+            console.log('sorting by '+t);
+            if(this.sortBy === t){
               if(this.sortMode === 'ASC'){this.sortMode ='DSC'}
               else{this.sortMode='ASC'}
             }else{
-              this.sortBy   = 'email';
+              this.sortBy   = t;
               this.sortMode='ASC'
             }
           },

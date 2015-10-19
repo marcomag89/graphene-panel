@@ -63,21 +63,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </paper-scroll-header-panel>
 
       <!-- Main Area -->
-      <paper-scroll-header-panel on-content-scroll="_onContentScroll"  on-paper-header-transform="_onHeaderTransform" main condenses keep-condensed-header>
+      <paper-scroll-header-panel
+        on-content-scroll="_onContentScroll"
+        on-paper-header-transform="_onHeaderTransform" main condenses keep-condensed-header>
 
         <!-- Main Toolbar -->
         <paper-toolbar id="mainToolbar" class="tall">
 
           <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-          <div class="flex">
-            <template is="dom-if" if="{{searchVisible}}">
-              <div class=" searchBar horizontal layout">
+          <div class="flex" >
+              <div class=" searchBar horizontal layout" hidden="{{!searchVisible}}">
                 <div class="flex">
-                  <input  is="iron-input" bind-value="{{searchValue}}">
+                  <input  id="searchBox" is="iron-input" bind-value="{{searchValue}}" >
                 </div>
                 <paper-icon-button icon="clear"  on-click="_clearSearch"></paper-icon-button>
               </div>
-            </template>
           </div>
 
           <!-- Toolbar icons -->
@@ -125,8 +125,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _toggleSearch:function(){
-        if(!this.searchVisible)this.scrollPageToTop();
+        var old = this.searchVisible;
         this.searchVisible=!this.searchVisible;
+        if(!old){
+          this.scrollPageToTop();
+          document.querySelector('#searchBox').focus();
+          //this.$$('#searchBox').focus();
+        }
       },
 
       _clearSearch:function(){

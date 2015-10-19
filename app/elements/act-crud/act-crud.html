@@ -9,35 +9,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../activity-behavior/activity-behavior.html">
 
-<dom-module id="users-single">
+<link rel="import" href="act-crud-behavior.html">
+<link rel="import" href="list-view.html">
+<link rel="import" href="single-view.html">
+
+<dom-module id="act-crud">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <graphene-client id="client"></graphene-client>
-    <h2>Dettagli utente</h2>
-    <paper-input label="email" value="{{model.email}}"></paper-input>
+    <list-view   list   ></list-view>
+    <single-view single ></single-view>
   </template>
   <script>
     (function () {
       'use strict';
-
-        Polymer({
-          is: 'users-single',
-          loadItem:function(id){
-            this.$.client.gFetch('/users/user/'+id)
-              .then(function(res){
-                this.model=res.User;
-              }.bind(this));
-          },
-          properties:{
-            model:Object
-          }
-        });
+      Polymer({
+        is: 'act-crud',
+        behaviors:[actCrudBehavior]
+      });
     })();
   </script>
 </dom-module>
