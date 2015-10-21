@@ -142,8 +142,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var body={Config:{admin:{email:confMail.value, password:confPass.value}}};
           console.log(body);
           this.$.client.gFetch('/system/config',body)
-            .then  (function(res){console.log(res)})
-            .catch (function(err){console.error(res)})
+            .then  (function(res){console.log(res);})
+            .catch (function(err){console.error(res);});
         }else{
           console.log('invalid');
         }

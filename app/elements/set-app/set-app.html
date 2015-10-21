@@ -82,9 +82,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           this._display='loading';
         }
-        var event = new CustomEvent("sys-application-status-changed", {
+        var sChangeEvent = new CustomEvent('sys-application-status-changed', {
           detail:{newStatus:this._display,oldStatus:oldDisplay},bubbles: true,cancelable: false});
-        document.dispatchEvent(event);
+        document.dispatchEvent(sChangeEvent);
       },
 
       properties: {

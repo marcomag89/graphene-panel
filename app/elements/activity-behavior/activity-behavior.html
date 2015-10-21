@@ -3,10 +3,10 @@ COMPORTAMENTO ACTIVITY
 Definisce l'interfaccia ed un comportamento di un activity vuota
 
 -->
-
+<link rel="import" href="app-events-behavior.html">
 <script>
 
-  var activityBehavior = {
+  var activityBehaviorImpl = {
 
     attached:function(){
       this._init();
@@ -16,10 +16,10 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
       this.getIdentifier();
       this.setAttribute('data-route',this.activityId);
       //console.log('init: ' + this.activityId);
-      document.addEventListener("sys-application-status-changed", function(e){this._onApplicationStatusChange(e) }.bind(this), false);
+      document.addEventListener('sys-application-status-changed', function(e){this._onApplicationStatusChange(e); }.bind(this), false);
       this.onInit();
+      console.log('init: '+this.activityId);
       this._fireActivityInit();
-
     },
 
     getIdentifier:function(){
@@ -34,7 +34,7 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
     },
 
     _fireActivityInit:function(){
-      var event = new CustomEvent("sys-activity-init", {
+      var event = new CustomEvent('sys-activity-init',{
         detail:{activity:this.activityId},
         bubbles: true,cancelable: true});
       document.dispatchEvent(event);
@@ -44,11 +44,11 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
       var status= e.detail.newStatus;
       this.appStatus = status;
       switch (status){
-        case 'loading'    :{ if(this.currentActivity === this.activityId) this.onStop();  break; }
-        case 'no-session' :{ if(this.currentActivity === this.activityId) this.onStop();  break; }
-        case 'no-app'     :{ if(this.currentActivity === this.activityId) this.onStop();  this.onStop(); break;}
-        case 'no-network' :{ if(this.currentActivity === this.activityId) this.onStop();  this.onStop(); break;}
-        case 'allow'      :{ if(this.currentActivity === this.activityId) this.onStart(); break; }
+        case 'loading'    :{ if(this.currentActivity === this.activityId) {this.onStop();}  break; }
+        case 'no-session' :{ if(this.currentActivity === this.activityId) {this.onStop();}  break; }
+        case 'no-app'     :{ if(this.currentActivity === this.activityId) {this.onStop();}  break; }
+        case 'no-network' :{ if(this.currentActivity === this.activityId) {this.onStop();}  break; }
+        case 'allow'      :{ if(this.currentActivity === this.activityId) {this.onStart();} break; }
       }
     },
 
@@ -63,13 +63,6 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
       //console.log('%s params changed: %O',this.activityId, this.params);
     },
 
-    onInit         : function () {/*console.log(this.getIdentifier()+' initialized');*/},
-    onStart        : function () {/*console.log(this.getIdentifier()+' started');*/},
-    onStop         : function () {/*console.log(this.getIdentifier()+' stopped');*/},
-    onRefresh      : function () {/*console.log(this.getIdentifier()+' refresh');*/},
-    onSearch       : function (q) {/*console.log(this.getIdentifier()+' search: '+q)*/},
-    onParamsChange : function (newPars) {/*console.log(this.activityId+' paramsChanged: %O',newPars)*/},
-
     properties:{
       isActivity      : {type:Boolean, value:true},
       activityId      : String,
@@ -80,4 +73,5 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
     }
   };
 
+  var activityBehavior = [appEventsBehavior,activityBehaviorImpl];
 </script>

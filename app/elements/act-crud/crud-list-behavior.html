@@ -32,11 +32,11 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
       var t= e.target.getAttribute('field');
       console.log('sorting by '+t);
       if(this.sortBy === t){
-        if(this.sortMode === 'ASC'){this.sortMode ='DSC'}
-        else{this.sortMode='ASC'}
+        if(this.sortMode === 'ASC'){this.sortMode ='DSC';}
+        else{this.sortMode='ASC';}
       }else{
         this.sortBy   = t;
-        this.sortMode='ASC'
+        this.sortMode='ASC';
       }
     },
     onSearch:function(q){
@@ -57,5 +57,5 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
     }
   };
 
-  var crudListBehavior = [activityBehavior,crudListBehaviorImpl]
+  var crudListBehavior = [appEventsBehavior,crudListBehaviorImpl];
 </script>

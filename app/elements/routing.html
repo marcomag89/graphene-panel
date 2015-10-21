@@ -10,12 +10,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <script src="../bower_components/page/page.js"></script>
 <script>
+  var onRouteChange = function(data){
+    var app = document.querySelector('app-index');
+    app.setRoute(this.dataRoute,data.params);
+    app.scrollPageToTop();
+  };
+
   window.addEventListener('WebComponentsReady', function() {
     var app = document.querySelector('app-index');
     var activities = [];
     for(var i in routing) {
-      var postfix='';
-      var prefix='';
+      var postfix = '';
+      var prefix  = '';
       if(!!routing[i].settings){
         if(!!routing[i].settings.postfix){postfix = '-'+routing[i].settings.postfix;}
         if(!!routing[i].settings.prefix) {prefix  = routing[i].settings.prefix+'-';}
@@ -39,17 +45,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           href     : routing[i].menu,
           icon     : routing[i].icon,
           name     : routing[i].title
-        })
+        });
       }
-
-      page(routing[i].path, function (data) {
-        app.setRoute(this.dataRoute,data.params);
-        app.scrollPageToTop();
-      }.bind(routing[i]));
+      page(routing[i].path, onRouteChange.bind(routing[i]));
     }
     // add #! before urls
     page({hashbang: true});
     app.menuItems  = menuItems;
+  });
 
-  })
 </script>

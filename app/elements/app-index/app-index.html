@@ -108,16 +108,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </paper-scroll-header-panel>
     </paper-drawer-panel>
   </template>
-
-  <script src="menuSettings.js"></script>
   <script>
   (function(document) {
-    'use strict'
+    'use strict';
     Polymer({
       is: 'app-index',
       attached : function(){
         //this.menuItems = document.menuSettings;
-        document.addEventListener("sys-activity-init", function(e){ this._onActivityInit(e)          }.bind(this), false);
+        document.addEventListener('sys-activity-init', function(e){this._onActivityInit(e);}.bind(this), false);
 
       },
       _sendRefresh:function(){
@@ -140,16 +138,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _onActivityInit:function(e){
-        if(this.initActivity == null)this.initActivity=[];
+        if(!(!!this.initActivity)){this.initActivity=[];}
         if(this.regActivities.indexOf(e.detail.activity) !== -1 && this.initActivity.indexOf(e.detail.activity) === -1){
           this.initActivity.push(e.detail.activity);}
         if(this.initActivity.length >= this.regActivities.length){
-          this._fireActivityLoaded()
+          this._fireActivityLoaded();
         }
       },
 
       _onContentScroll:function(e){
-        var event = new CustomEvent("indexContentScroll", {detail: e.detail,bubbles: true,cancelable: true});
+        var event = new CustomEvent('indexContentScroll', {detail: e.detail,bubbles: true,cancelable: true});
         document.dispatchEvent(event);
       },
 
@@ -191,7 +189,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _fireActivityLoaded:function(){
-        var event = new CustomEvent("sys-app-index-activity-loaded", {
+        var event = new CustomEvent('sys-app-index-activity-loaded', {
           detail:{},
           bubbles: true,cancelable: true});
         document.dispatchEvent(event);

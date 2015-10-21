@@ -93,6 +93,9 @@ gulp.task('copy', function () {
     dot: true
   }).pipe(gulp.dest('dist'));
 
+  var conf = gulp.src(['app/conf/*.js']) //Config files cp
+    .pipe(gulp.dest('dist/conf'));
+
   var bower = gulp.src([
     'bower_components/**/*'
   ]).pipe(gulp.dest('dist/bower_components'));
@@ -233,6 +236,7 @@ gulp.task('serve', ['styles', 'elements', 'images'], function () {
   gulp.watch(['app/**/*.html'], reload);
   gulp.watch(['app/styles/**/*.css'], ['styles', reload]);
   gulp.watch(['app/elements/**/*.css'], ['elements', reload]);
+  gulp.watch(['app/conf/**/*.js'], ['jshint', reload]); //for config folder
   gulp.watch(['app/{scripts,elements}/**/{*.js,*.html}'], ['jshint']);
   gulp.watch(['app/images/**/*'], reload);
 });

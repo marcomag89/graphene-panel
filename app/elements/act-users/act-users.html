@@ -23,71 +23,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       'use strict';
         Polymer({
           is: 'act-users',
-          behaviors:[activityBehavior],
-
-          onInit:function(){
-            this.listView   = this.$$('[list]');
-            this.singleView = this.$$('[single]');
-          },
-
-          onStart: function () {
-            if(!!this.selected)
-              try{
-                this.selected.onStart();
-
-              }catch(ex){}
-          },
-
-          onStop:function(){
-            if(!!this.selected)
-            try{
-              this.selected.onStop();
-
-            }catch(ex){}
-          },
-          setView:function(view){
-            if(view === 'single'){
-              this.selected = this.singleView;
-              this.singleView.removeAttribute('hidden');
-              this.listView.setAttribute('hidden',true);
-            }else{
-              this.selected = this.listView;
-              this.listView.removeAttribute('hidden');
-              this.singleView.setAttribute('hidden',true);
-            }
-          },
-
-          onParamsChange: function (newParams) {
-            this.onStop();
-            if(!!newParams){
-              if(newParams.mode === 'list')   {this.setView('list');   }
-              else if(newParams.mode === 'create') {this.setView('single'); }
-              else if(newParams.mode === 'view' || newParams.mode === 'edit'){
-                this.setView('single');
-                this.selected.loadItem(newParams.par);
-              }
-            }else{ this.setView('list');}
-
-            this.onStart();
-            console.log('user changed: ',newParams);
-          },
-          onSearch:function(q){
-            try{
-              this.selected.onSearch(q);
-            }catch(e){}
-          },
-          onRefresh: function () {
-            try{
-              this.selected.onRefresh();
-            }catch(e){}
-          },
-
-          properties: {
-            listView    : Object,
-            singleView  : Object,
-            selected    : Object
-          }
+          behaviors: [actCrudBehavior],
         });
-    })();
+    }());
   </script>
 </dom-module>

@@ -8,18 +8,18 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="client-controller.html">
 <dom-module id="graphene-client">
-  <script src="ClientController.js"></script>
   <template></template>
   <script>
   (function() {
     'use strict';
     var ctrl = ClientController.getInstance();
-    console.log("Client controller: ",ctrl);
+    //console.log("Client controller: ",ctrl);
 
     Polymer({
       is: 'graphene-client',
+
       attached:function(){
         ctrl.pushClient(this);
       },
@@ -46,7 +46,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       gFetch:function(service,body,method,headers){
-        return ctrl.gFetch(service,body,method,headers)
+        return ctrl.gFetch(service,body,method,headers);
       },
 
       _onSettingChange:function(currentSettings){
@@ -64,7 +64,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _fireReady:function(){
         if(!!this.settings  && !!this.status && this.status.online && !this.ready){
           this.ready=true;
-          this.fire('ready')
+          this.fire('ready');
         }
 
       },
