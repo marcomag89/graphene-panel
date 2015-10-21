@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id="app-index">
+<dom-module id="app-content">
   <style is="custom-style">
 
     /*
@@ -38,7 +38,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     @media (max-width:600px){paper-material{width: calc(97.33% - 32px);}  }
 
   </style>
-  <link rel="stylesheet" href="app-index.css">
+  <link rel="stylesheet" href="app-content.css">
   <template>
     <paper-drawer-panel id="paperDrawerPanel">
       <!-- Drawer Scroll Header Panel -->
@@ -112,7 +112,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   (function(document) {
     'use strict';
     Polymer({
-      is: 'app-index',
+      is: 'app-content',
       attached : function(){
         //this.menuItems = document.menuSettings;
         document.addEventListener('sys-activity-init', function(e){this._onActivityInit(e);}.bind(this), false);

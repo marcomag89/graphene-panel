@@ -10,14 +10,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <script src="../bower_components/page/page.js"></script>
 <script>
+  var app=null;
   var onRouteChange = function(data){
-    var app = document.querySelector('app-index');
     app.setRoute(this.dataRoute,data.params);
     app.scrollPageToTop();
   };
 
   window.addEventListener('WebComponentsReady', function() {
-    var app = document.querySelector('app-index');
+    app = document.querySelector('#appContent');
     var activities = [];
     for(var i in routing) {
       var postfix = '';
@@ -36,7 +36,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   });
 
   window.addEventListener('sys-app-index-activity-loaded',function(e){
-    var app = document.querySelector('app-index');
     var menuItems  = [];
     for(var i in routing){
       if(routing[i].menu !== undefined ){

@@ -66,16 +66,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-login
           title="Graphene toolbox"
           subtitle="smartest solution for your graphene management"
-          ></app-login>               </div>
-      <div allow>      <app-index id="appIndex"></app-index> </div>
+          ></app-login>
+      </div>
+      <div allow>
+        <app-content id="appContent"></app-content>
+      </div>
     </set-app>
 
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
-    <!--
-    <paper-toast id="caching-complete"
-                 duration="6000"
-                 text="Caching complete! This app will work offline.">
-    </paper-toast>
+
+    <paper-toast id="caching-complete" duration="6000" text="Caching complete! This app will work offline."></paper-toast>
 
     <platinum-sw-register auto-register
                           clients-claim
@@ -85,7 +85,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                          cache-config-file="cache-config.json">
       </platinum-sw-cache>
     </platinum-sw-register>
-    -->
+
   </template>
 
   <!-- build:js scripts/app.js --
