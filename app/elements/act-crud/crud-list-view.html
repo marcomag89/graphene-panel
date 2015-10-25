@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="collection-fetcher.html">
 <link rel="import" href="crud-list-behavior.html">
 
 
@@ -17,7 +18,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
 
       <collection-fetcher
-        id="fetcher"
+        is           = "fetcher"
         result       = "{{result}}"
         base-url     = "{{baseUrl}}"
         end-element  = "{{endElement}}"
@@ -37,7 +38,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </template>
       </table>
 
-      <div id="end"></div>
+      <div is="end-element"></div>
   </template>
   <script>
     (function () {

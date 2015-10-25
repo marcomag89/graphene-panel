@@ -25,7 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       addProfile: function (name,serverUrl,apiKey,accessToken,otherSettings) {
-        ctrl.addProfile(name,serverUrl,apiKey,accessToken,otherSettings);
+        ctrl.addProfile(name, serverUrl, apiKey, accessToken, otherSettings);
       },
 
       selectProfile:function(profileName){
@@ -45,8 +45,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
+      logout:function(accessToken){
+        ctrl.logout(accessToken);
+      },
+
       gFetch:function(service,body,method,headers){
         return ctrl.gFetch(service,body,method,headers);
+      },
+
+      docOf:function(action){
+        var action = action.replace('.','__');
+        return ctrl.gFetch('/system/doc/'+action);
       },
 
       _onSettingChange:function(currentSettings){
@@ -66,8 +75,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.ready=true;
           this.fire('ready');
         }
-
       },
+
       properties : {
         ready           : {type:Boolean, value:false,     notify:true},
         settings        : {type:Object,  value:null,      notify:true},

@@ -10,39 +10,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id="set-app">
+<dom-module id="app-status">
   <style>
-    #__debug{
-      position: fixed;
-      bottom: 0;
-      opacity: .7;
-      font-size: 0.7em;
-      font-weight: 100;
-      background-color: black;
-      color: white;
-      z-index: 9999;
-      border: 1px solid gray;
-      width: 100%;
-    }
-    iron-pages{
-      padding: 0px;
-    }
+    iron-pages{padding: 0px;}
   </style>
   <template>
     <graphene-client id="client" on-status-change="_statusChanged"></graphene-client>
-<!--
-    <div id="__debug">
-      <ul>
-        <li>loading:         <span>{{_status.loading}}</span>       </li>
-        <li>online:          <span>{{_status.online}}</span>        </li>
-        <li>acl:             <span>{{_status.aclEnabled}}</span>    </li>
-        <li>app authorized:  <span>{{_status.appAuthorized}}</span> </li>
-        <li>user logged in:  <span>{{_status.loggedIn}}</span>      </li>
-        <li>display:         <span>{{_display}}</span>      </li>
-
-      </ul>
-    </div>
--->
 
     <iron-pages selected="{{_display}}" attr-for-selected="name">
       <div name="loading" >    <content select = "[loading]">    </content> </div>
@@ -57,13 +30,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     'use strict';
 
     Polymer({
-      is: 'set-app',
+      is: 'app-status',
 
       attached:function(){
-        //console.log('ready');
-       // console.log(settings.api.server.url);
-        this.$.client.addProfile('default',settings.api.server.url,settings.api.server.apiKey,'','');
-        this.$.client.selectProfile('default');
+        app.status = this;
+       // this.$.client.addProfile('default',settings.api.server.url,settings.api.server.apiKey,'','');
+       // this.$.client.selectProfile('default');
       },
 
       _statusChanged:function(event){
@@ -82,7 +54,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           this._display='loading';
         }
-        var sChangeEvent = new CustomEvent('sys-application-status-changed', {
+        console.log(this._status);
+        var sChangeEvent = new CustomEvent('app-status-change', {
           detail:{newStatus:this._display,oldStatus:oldDisplay},bubbles: true,cancelable: false});
         document.dispatchEvent(sChangeEvent);
       },

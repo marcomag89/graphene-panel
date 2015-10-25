@@ -9,7 +9,9 @@
     "neon-elements": "PolymerElements/neon-elements#^1.0.0",
     "page": "visionmedia/page.js#~1.6.3",
     "iron-collapse": "PolymerElements/iron-collapse#~1.0.3",
-    "paper-spinner": "PolymerElements/paper-spinner#~1.0.2"
+    "paper-spinner": "PolymerElements/paper-spinner#~1.0.2",
+    "iron-a11y-keys": "PolymerElements/iron-a11y-keys#~1.0.2",
+    "path-to-regexp": "pathtoregexp#~1.0.3"
   },
   "devDependencies": {
     "web-component-tester": "*",

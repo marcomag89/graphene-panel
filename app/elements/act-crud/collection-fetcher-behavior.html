@@ -1,0 +1,44 @@
+<!--
+COMPORTAMENTO ACTIVITY
+Definisce l'interfaccia ed un comportamento di un activity vuota
+
+-->
+
+<script>
+
+  var actCollectionFetcherImpl= {
+    attached:function(){
+      this.mapTemplate
+    },
+
+    mapTemplate:function(){
+      this.client   = this.$$('[is=client]');
+      this.selector = this.$$('[is=page-selector]');
+      if(!(!!this.client))  {console.warn('Client role not found in this template');}
+      if(!(!!this.selector)){console.warn('Page selector role not found in this template');}
+      else{this.selector.setCollectionFetcher(this);}
+    },
+
+    attributeChanged:function(){
+      this.mapTemplate();
+      this.selector.reset();
+    },
+
+    fetch:function(page){
+
+    },
+
+
+    properties : {
+      action    : String,
+
+      page      : Number,
+      pageSize  : Number,
+      search    : String,
+      sortField : String,
+      sortMode  : String
+    }
+  };
+
+var collectionFetcher = [collectionFetcherImpl];
+</script>

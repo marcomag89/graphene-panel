@@ -9,24 +9,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="crud-single-behavior.html">
 
-<dom-module id="crud-single-view">
+<dom-module id="act-modules">
   <template>
     <style>
-      :host { display: block;}
+      :host {
+        display: block;
+      }
     </style>
-    <graphene-client id="client"></graphene-client>
-    <h2>Dettagli utente</h2>
-    <paper-input label="email" value="{{model.email}}"></paper-input>
+    <div>Hello from <span>{{foo}}</span></div>
   </template>
   <script>
-    (function () {
-      'use strict';
-      Polymer({
-        is: 'crud-single-view',
-        behaviors:[crudSingleBehavior]
-      });
-    })();
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'act-modules',
+      behaviors:[activityBehavior],
+
+      properties: {
+        foo: {
+          type: String,
+          value: 'act-modules',
+          notify: true
+        }
+      }
+    });
+  })();
   </script>
 </dom-module>

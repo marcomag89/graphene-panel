@@ -1,3 +1,5 @@
+<script src="../../conf/apiSettings.js"></script>
+
 <script>
   /**
    * Created by Marco on 08/10/15.
@@ -10,9 +12,7 @@
 
   ClientController.prototype = {
     pushClient : function(grapheneClient){
-      this.clients.push(grapheneClient);
-      grapheneClient._onSettingChange(this.settings);
-      grapheneClient._onClientStatusChange(this.status);
+
     },
 
     fireSettingsChanged    : function(newValue){for(var cln in this.clients){this.clients[cln]._onSettingChange(newValue);     }},
@@ -139,8 +139,8 @@
             user       : info.user,
             aclEnabled : info.aclEnabled
           };
-          status.loggedIn      = (!!info.user.name);
-          status.appAuthorized = (!!info.application.name);
+          status.loggedIn      = (info.user.mail !== null);
+          status.appAuthorized = (info.application.name !== null);
           status.online        = true;
           status.loading       = false;
           if(this._statusHasChanged(status)){
@@ -238,5 +238,41 @@
     if(ClientController.instance === null){ClientController.instance = new ClientController();}
     return ClientController.instance;
   };
+
+  var grapheneClientBehavior = null;
+
+  (function(){
+
+    var settingsKey = 'cl-data';
+    var instance = {
+      status          : {loading:true},
+      clients         : [],
+      settings        : null,
+      selectedProfile : 'default'
+    };
+
+    grapheneClientBehavior = {
+      attached : function(){
+        instance.clients.push(this);
+        if(instance.settings === null){this._loadSettings()}
+      },
+
+      _loadSettings:function(){
+        var settingsString = localStorage.getItem(settingsKey);
+        if(settingsString !== null){
+          this.settings = JSON.parse(settingsString);
+          if(this.settings.selectedProfile !== null && !!this.settings.profiles[this.settings.selectedProfile]){
+            this._checkStatus();
+          }
+          else{
+            console.warn('profile: '+this.settings.selectedProfile+' not found');
+          }
+        }else{
+          this._saveSettings(ClientController.settingScaffolding);
+        }
+      }
+
+      };
+  })();
 
 </script>

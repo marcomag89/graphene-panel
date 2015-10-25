@@ -179,9 +179,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       onDataRouteClick : function() {
         var drawerPanel = document.querySelector('#paperDrawerPanel');
-        if (drawerPanel.narrow) {
-          drawerPanel.closeDrawer();
-        }
+        if (drawerPanel.narrow) {drawerPanel.closeDrawer();}
       },
 
       // Scroll page to top and expand header
@@ -209,6 +207,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       setActivities:function(activities){
         this.activities=activities;
       },
+
       setMenuItems:function(menuItems){
         this.menuItems = menuItems;
       },

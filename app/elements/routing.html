@@ -8,16 +8,17 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<script src="../bower_components/page/page.js"></script>
 <script>
-  var app=null;
+  /*
+  var app = null;
+
   var onRouteChange = function(data){
     app.setRoute(this.dataRoute,data.params);
     app.scrollPageToTop();
   };
 
   window.addEventListener('WebComponentsReady', function() {
-    app = document.querySelector('#appContent');
+    app = document.querySelector('app-index');
     var activities = [];
     for(var i in routing) {
       var postfix = '';
@@ -32,10 +33,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         activities.push({name:routing[i].activity, settings:routing[i].settings});
       }
     }
-    app.activities = activities;
+    app.setActivities(activities);
   });
 
-  window.addEventListener('sys-app-index-activity-loaded',function(e){
+  window.addEventListener('ActivitiesReady',function(e){
     var menuItems  = [];
     for(var i in routing){
       if(routing[i].menu !== undefined ){
@@ -50,7 +51,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
     // add #! before urls
     page({hashbang: true});
-    app.menuItems  = menuItems;
+    app.setMenuItems(menuItems);
   });
-
+*/
 </script>

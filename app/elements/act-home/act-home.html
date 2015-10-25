@@ -49,12 +49,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
     </style>
-    <template is="dom-if" if="{{!loaded}}">
-      <div class="spinner">
-        <paper-spinner active="{{!loaded}}"></paper-spinner>
-      </div>
-    </template>
-    <graphene-client id="client" ></graphene-client>
+    <graphene-client id="client"></graphene-client>
     <template is="dom-if" if="{{loaded}}">
       <template is="dom-if" if="{{!aclEnabled}}">
         <div id="aclNotification">
@@ -62,10 +57,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           This is an open api!<br/>
           you can enable acl launching autoconfig and creating an administrator
           <paper-input
-            id="confMail"
-            type="mail"
-            label="email"
-            pattern="^[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+            id="confUser"
+            type="text"
+            label="username"
             error-message = "Email is not valid"
             required
             >    </paper-input>
@@ -78,7 +72,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             required
             > </paper-input>
 
-          <paper-button on-click="_sendConfiguration">Configure</paper-button>
+          <paper-button on-click="_sendConfig">Configure</paper-button>
 
         </div>
       </template>
@@ -94,7 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </table>
 
       <h2>Installed Modules</h2>
-      <template is="dom-repeat" items="{{modules}}">
+      <template is="dom-repeat" items="{{mods}}">
         <h3>{{item.name}}</h3>
         <div>
           <table>
@@ -118,50 +112,50 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
   (function() {
     'use strict';
-
     Polymer({
       is: 'act-home',
+
       behaviors:[activityBehavior],
+
       onStart:function(){
-        this.$.client.gFetch('/system/status'). then(function(res){this.status  =res.GrapheneStatus;   }.bind(this));
-        this.$.client.gFetch('/system/modules').then(function(res){this.modules =res.InstalledModules; }.bind(this));
+        this.$.client.gFetch('/system/status'). then(function(res){this.status  = res.GrapheneStatus; }.bind(this));
+        this.$.client.gFetch('/system/modules').then(function(res){this.mods = res.InstalledModules;  }.bind(this));
       },
+
       onStop:function(){
-        this.modules = null;
+        this.mods = null;
         this.status  = null;
       },
       _isLoaded:function(status,modules){
-        return (status!==null && modules !==null);
+        if(status !== null && modules !== null){
+          this.setReady();
+          return true;
+        }else {
+          return false;
+        }
       },
 
-      _sendConfiguration:function(e){
-        var confMail=this.querySelector('#confMail');
+      _sendConfig:function(e){
+        var confUser=this.querySelector('#confUser');
         var confPass=this.querySelector('#confPasswd');
-        if(confMail.validate() && confPass.validate()){
-          console.log('config');
-          var body={Config:{admin:{email:confMail.value, password:confPass.value}}};
-          console.log(body);
+        if(confUser.validate() && confPass.validate()){
+          var body={Config:{admin:{username:confUser.value, password:confPass.value}}};
           this.$.client.gFetch('/system/config',body)
             .then  (function(res){console.log(res);})
-            .catch (function(err){console.error(res);});
+            .catch (function(err){console.error(err);});
         }else{
           console.log('invalid');
         }
       },
 
-      _statusChanged:function(evt){
-        var status=evt.detail;
-        console.log(status);
-        this.aclEnabled = status.aclEnabled;
-      },
-
-      properties: {
-        loaded     : {type:Boolean,notify:true,  computed:'_isLoaded(status,modules)'},
-        aclEnabled : {type:Boolean,notify:true, value:true},
-        status     : {type:Object, notify:true, value:null},
-        modules    : {type:Object, notify:true, value:null}
+      properties : {
+        loaded     : {type:Boolean, notify:true, computed:'_isLoaded(status,mods)'},
+        aclEnabled : {type:Boolean, notify:true, value:true},
+        status     : {type:Object,  notify:true, value:null},
+        mods       : {type:Object,  notify:true, value:null}
       }
     });
+
   })();
   </script>
 </dom-module>

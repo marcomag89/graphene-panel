@@ -1,0 +1,98 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../graphene-client/graphene-client.html">
+
+<dom-module id="graphene-crud">
+  <template>
+    <graphene-client id="client"></graphene-client>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+    Polymer({
+      is: 'graphene-crud',
+
+      create:function(model){
+        if(!!this.modelDoc.c && this.isValid('c'))
+          return this.$.client.gFetch(this.modelDoc.c,this.model);
+      },
+
+      read:function(id){
+        if(!!this.modelDoc.r)
+          return this.$.client.gFetch(this.modelDoc.r.replace(':id',id));
+      },
+
+      update:function(){
+        if(!!this.modelDoc.r && this.isValid('u'))
+          return this.$.client.gFetch(this.modelDoc.u,this.model);
+      },
+
+      delete:function(){
+        if(!!this.modelDoc.d && this.isValid('d'))
+          return this.$.client.gFetch(this.modelDoc.d,this.model);
+      },
+
+      getCStruct:function(){
+        return this.a;
+      },
+
+      getRStruct:function(){
+
+      },
+
+      getUStruct:function(){
+
+      },
+
+      getDStruct:function(){
+
+      },
+
+      isValid:function(mode){
+        return true;
+      },
+
+
+      _fetchDoc : function(action,mode){
+        this.$.client.fetch('/system/doc/'+action.replace('.','__'))
+          .then(function(res){
+            this.modelDoc[mode] = res;
+          }.bind(this))
+          .catch(function(err){
+            console.error('Cannot fetch doc of: '+newModelName+' error during download ',err)
+          }.bind(this));
+      },
+
+      _modelNameChanged:function(newModelName, oldModelName){
+        this.modelDoc = {};
+        if(!!apiSettings.models['newModelName']){
+          var modelMapping = apiSettings.models['newModelName'];
+          this._fetchDoc(modelMapping.replace('$CRUD','CREATE'),'c');
+          this._fetchDoc(modelMapping.replace('$CRUD','READ'  ),'r');
+          this._fetchDoc(modelMapping.replace('$CRUD','UPDATE'),'u');
+          this._fetchDoc(modelMapping.replace('$CRUD','DELETE'),'d');
+        }else{
+          console.error('Cannot fetch doc of: '+newModelName+' model unrecognized');
+        }
+      },
+
+      properties: {
+        modelName : {type:String, observer:'_modelNameChanged'}, //namespace-modelname
+        modelDoc  : Object, //informazioni ottenute da doc
+
+        //Modello corrente
+        model     : Object
+      }
+    });
+  })();
+  </script>
+</dom-module>

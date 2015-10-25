@@ -8,18 +8,19 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
 
   var activityBehaviorImpl = {
 
-    attached:function(){
-      this._init();
-    },
+    attached:function(){this._init();},
 
     _init:function(){
       this.getIdentifier();
       this.setAttribute('data-route',this.activityId);
-      //console.log('init: ' + this.activityId);
       document.addEventListener('sys-application-status-changed', function(e){this._onApplicationStatusChange(e); }.bind(this), false);
       this.onInit();
       console.log('init: '+this.activityId);
-      this._fireActivityInit();
+      this.activityManager.onActivityInit(this);
+    },
+
+    setActivityManager : function(activityManager){
+      this.activityManager = activityManager;
     },
 
     getIdentifier:function(){
@@ -33,34 +34,21 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
       return this.activityId;
     },
 
-    _fireActivityInit:function(){
-      var event = new CustomEvent('sys-activity-init',{
-        detail:{activity:this.activityId},
-        bubbles: true,cancelable: true});
-      document.dispatchEvent(event);
-    },
-
-    _onApplicationStatusChange:function(e){
-      var status= e.detail.newStatus;
-      this.appStatus = status;
-      switch (status){
-        case 'loading'    :{ if(this.currentActivity === this.activityId) {this.onStop();}  break; }
-        case 'no-session' :{ if(this.currentActivity === this.activityId) {this.onStop();}  break; }
-        case 'no-app'     :{ if(this.currentActivity === this.activityId) {this.onStop();}  break; }
-        case 'no-network' :{ if(this.currentActivity === this.activityId) {this.onStop();}  break; }
-        case 'allow'      :{ if(this.currentActivity === this.activityId) {this.onStart();} break; }
-      }
-    },
-
-    _isActivityEnabled:function(){
-        return (this.appStatus==='allow' && this.currentActivity === this.activityId);
-    },
-
-
     _setPars : function(pars){
       this.params = pars;
       this.onParamsChange(pars);
-      //console.log('%s params changed: %O',this.activityId, this.params);
+    },
+
+    start:function(){
+      this.onStart();
+    },
+
+    stop:function(){
+      this.onStop();
+    },
+
+    setReady:function(){
+      this.activityManager.onActivityReady();
     },
 
     properties:{
@@ -69,7 +57,8 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
       currentActivity : String,
       params          : Object,
       appStatus       : String,
-      settings        : Object
+      settings        : Object,
+      activityManager : Object,
     }
   };
 

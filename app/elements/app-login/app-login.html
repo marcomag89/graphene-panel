@@ -25,10 +25,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --paper-input-container-input-color   : var(--primary-text-color);
         --paper-input-container-invalid-color : var(--accent-color);
       }
+      paper-button {
+        /*background : var(--accent-color);
+        color      : var(--text-primary-color);*/
+      }
       .login-form{
-        width: 300px;
-        margin: auto;
-        margin-top: 30px;
+        max-width: 300px;
+        margin: 30px auto auto auto;
         background-color : var(--light-primary-color);
         color            : var(--primary-text-color);
         padding: 40px;
@@ -61,16 +64,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div>
       <div class="app-title">{{title}}</div>
       <div class="app-subtitle">{{subtitle}}</div>
-      <div class="login-form">
+      <paper-material  elevation ="2" class="login-form">
         <graphene-client id="client"></graphene-client>
         <h2>login</h2>
-        <paper-input id="mailField" label="email">                   </paper-input>
-        <paper-input id="pwdField"  type="password" label="password"></paper-input>
+        <paper-input
+          id    = "userField"
+          label = "username"
+          required
+          error-message = "invalid email address"
+          >
+        </paper-input>
+        <paper-input
+          id="pwdField"
+          type="password"
+          label="Password"
+          minlength="8"
+          error-message = "invalid password"
+          required
+          ></paper-input>
         <div class="buttons">
           <paper-button on-click="_authenticate">login</paper-button>
         </div>
-      </div>
-
+      </paper-material>
+      <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_enterPressed"></iron-a11y-keys>
     </div>
   </template>
   <script>
@@ -79,25 +95,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
       is: 'app-login',
+      attached:function(){
+
+      },
+      _enterPressed:function(){
+        this._authenticate();
+      },
       _authenticate:function(e){
-        var mail = this.$.mailField;
+        var user = this.$.userField;
         var pwd  = this.$.pwdField;
-        if(mail.validate() && pwd.validate()){
-          this.$.client.gFetch('/auth/login',{
-            User:{
-              email:mail.value,
-              password:pwd.value
-            }
-          }).then(function(res){
-            console.log('login successful: ',res);
-          }).catch(function(err){
-            console.log('login error! ',err);
-          });
+        if(user.validate() && pwd.validate()){
+          var auth={username:user.value,password:pwd.value};
+          this.$.client.gFetch('/auth/login',{User:auth})
+            .then(function(res){
+              this.async(function(){
+                this.resetUsername();
+                this.resetPassword();
+              },1000);
+            }.bind(this))
+            .catch(function(err){
+              this.resetPassword();
+              this.showLoginError();
+            }.bind(this));
+        }else{
+          this.resetPassword();
+          this.showLoginError();
         }
       },
 
+      resetUsername:function(){
+        this.$.userField.value='';
+      },
+
+      resetPassword:function(){
+        this.$.pwdField.value='';
+      },
+
+      showLoginError:function(){app.errorToast('login error!');},
+
       properties: {
         title    : String,
+        username : String,
+        password : String,
         subtitle : String
       }
     });
