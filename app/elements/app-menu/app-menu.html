@@ -12,7 +12,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="app-menu">
   <style>
-    .paper-menu > .iron-selected {  color: var(--default-primary-color);  }
+    paper-menu  .iron-selected {
+      border-right: 3px solid var(--secondary-text-color);
+    }
+    paper-menu {
+      color: var(--default-primary-color);
+    }
     paper-menu a{  color: var(--menu-link-color);  }
   </style>
 
@@ -49,7 +54,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         for(var i in this.menuItems){
           var keys=[];
           if(pathtoregexp(this.menuItems[i].matches, keys).exec(path) !== null){
-            console.log('matches: '+this.menuItems[i].name)
             this.selected=this.menuItems[i].name;
             return;
           }

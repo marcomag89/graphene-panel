@@ -64,7 +64,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       onRouteChange:function(route,data){
-        this.activityReady = false;
         this.setRoute(route.dataRoute, data.params);
         this._fireRouteChange(route,data);
         // app.scrollPageToTop();
@@ -80,6 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         catch(e){equals=false;}
         if(equals){this.currentActivity._setPars(params)}
         else {
+          this.activityReady = false;
           try{oldActivity.stop();}catch(e2){}
           try{
             if(this.appEnabled) {
