@@ -64,39 +64,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       onRouteChange:function(route,data){
-        this.setRoute(route.dataRoute,data.params);
+        this.activityReady = false;
+        this.setRoute(route.dataRoute, data.params);
         this._fireRouteChange(route,data);
-       // app.scrollPageToTop();
+        // app.scrollPageToTop();
       },
 
       setRoute:function(route, params){
-        this.activityReady = false;
-        var oldSelector = '#activities > [data-route='+this.route+']';
-        var newSelector = '#activities > [data-route='+route+']';
-        var oldActivity = document.querySelector(oldSelector);
-        var newActivity = document.querySelector(newSelector);
+        var oldActivity = this.activities[this.route];
+        var newActivity = this.activities[route];
         this.currentActivity = newActivity;
-        var equals=false;
+
+        var equals = false;
         try{equals=(oldActivity.getIdentifier() === newActivity.getIdentifier());}
         catch(e){equals=false;}
-        if(equals){
-          this.currentActivity._setPars(params)
-        } else {
+        if(equals){this.currentActivity._setPars(params)}
+        else {
+          try{oldActivity.stop();}catch(e2){}
           try{
             if(this.appEnabled) {
-              newActivity.start();
-              newActivity._setPars(params);
+              this.currentActivity.start();
+              this.currentActivity._setPars(params);
             }
           }catch(e1){}
-
-          try{oldActivity.stop();}catch(e2){}
         }
         this.route  = route;
         this.params = params;
       },
 
       onActivityInit:function(activity){
-        //console.log(this.activities);
         if(!!this.activities[activity.getIdentifier()] && !(!!this.attached[activity.getIdentifier()])){
           this.attached[activity.getIdentifier()]=activity;
         }
@@ -105,7 +101,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       onActivityReady:function(){
         this.activityReady = true;
-        console.log(this.activityReady);
       },
 
       _createRoutes:function(){

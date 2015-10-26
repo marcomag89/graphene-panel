@@ -15,7 +15,7 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
       this.setAttribute('data-route',this.activityId);
       document.addEventListener('sys-application-status-changed', function(e){this._onApplicationStatusChange(e); }.bind(this), false);
       this.onInit();
-      console.log('init: '+this.activityId);
+      //console.log('init: '+this.activityId);
       this.activityManager.onActivityInit(this);
     },
 

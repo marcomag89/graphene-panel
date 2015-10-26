@@ -54,7 +54,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           this._display='loading';
         }
-        console.log(this._status);
+        //console.log(this._status);
         var sChangeEvent = new CustomEvent('app-status-change', {
           detail:{newStatus:this._display,oldStatus:oldDisplay},bubbles: true,cancelable: false});
         document.dispatchEvent(sChangeEvent);
