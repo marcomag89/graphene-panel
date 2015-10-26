@@ -101,7 +101,8 @@
     },
 
     _loadSettings:function(){
-      var settingsString = localStorage.getItem(ClientController.settingsKey);
+      var settingsKey = ClientController.settingsKey+'('+apiSettings.server.appName+')';
+      var settingsString = localStorage.getItem(settingsKey);
       if(settingsString !== null){
         this.settings= JSON.parse(settingsString);
         if(this.settings.selectedProfile !== null && !!this.settings.profiles[this.settings.selectedProfile]){
@@ -130,9 +131,10 @@
     },
 
     _saveSettings:function(profSettings){
+      var settingsKey = ClientController.settingsKey+'('+apiSettings.server.appName+')';
       if(!!profSettings.version && Number.isInteger(profSettings.version)) {profSettings.version++;}
       else {profSettings.version = 1;}
-      localStorage.setItem(ClientController.settingsKey,JSON.stringify(profSettings));
+      localStorage.setItem(settingsKey,JSON.stringify(profSettings));
       this._loadSettings();
       this.fireSettingsChanged(profSettings);
     },
