@@ -1,3 +1,4 @@
+<script src="../../conf/apiSettings.js"></script>
 <script>
   /**
    * Created by Marco on 08/10/15.
@@ -110,7 +111,21 @@
           console.warn('profile: '+this.settings.selectedProfile+' not found');
         }
       }else{
-        this._saveSettings(ClientController.settingScaffolding);
+        this._saveSettings(this.getDefaultSettings());
+      }
+    },
+    getDefaultSettings:function(){
+      return {
+        version:0,
+        selectedProfile:'default',
+        profiles:{
+          'default':{
+            server : apiSettings.server.url,
+            apiKey : apiSettings.server.apiKey,
+            accessToken:'',
+            settings:''
+          }
+        }
       }
     },
 

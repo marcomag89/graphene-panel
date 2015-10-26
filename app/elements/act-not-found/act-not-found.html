@@ -13,12 +13,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="act-not-found">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <div>Hello from <span>{{foo}}</span></div>
+    <h1>404</h1>
+    <p>not found</p>
   </template>
   <script>
   (function() {
@@ -27,14 +23,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'act-not-found',
       behaviors:[activityBehavior],
-
-      properties: {
-        foo: {
-          type: String,
-          value: 'act-not-found',
-          notify: true
-        }
-      }
+      onStart:function(){
+        console.log('started');
+        this.setReady();
+      },
+      properties: {}
     });
   })();
   </script>

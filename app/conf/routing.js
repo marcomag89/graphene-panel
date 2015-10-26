@@ -4,16 +4,10 @@
 
 var routing = [
   {path:'/',                 activity:'act-home'},
-
-  // [users/list]
-  {path:'/:model/list',      activity:'act-list'},
-
-  // [users/create/0, users/read/ID /users/update/ID]
-  {path:'/:model/:mode/:id', activity:'act-crud'},
-
+  {path:'/:model/list',      activity:'act-list'}, // [users/list]
+  {path:'/:model/:mode/:id', activity:'act-crud'}, // [users/create/0, users/read/ID /users/update/ID]
 
   /*404 error*/
-  {path:'*', activity:'act-not-found',   title:'404 Not found',    icon:'account-box'                      }
-
+  {path:'*', activity:'act-not-found'}
 ];
 
