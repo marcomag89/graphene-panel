@@ -35,8 +35,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <span>{{userGroups}}</span>
         </div>
       </div>
-      <div id="logoutBtn">
-        <paper-icon-button icon="exit-to-app" on-tap="_logout"></paper-icon-button>
+      <template is="dom-if" if="{{aclEnabled}}">
+        <div id="logoutBtn">
+          <paper-icon-button icon="exit-to-app" on-tap="_logout"></paper-icon-button>
+        </div>
+      </template>
       </div>
     </div>
   </template>
@@ -53,6 +56,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'app-session-display',
 
       _onStatusChange:function(e){
+        this.aclEnabled = e.detail.aclEnabled;
         if(!!e.detail.user){
           var user = JSON.parse(JSON.stringify(e.detail.user));
           var anonimousKeyword = 'ANONIMOUS';
@@ -77,6 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       properties: {
+        aclEnabled      : Boolean,
         user            : Object,
         userGroups      : String,
         wordReference   : { type:Object, value:wordReference}
