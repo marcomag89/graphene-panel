@@ -13,13 +13,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="app-activity-router">
   <style>
     div.spinner{
-      margin-top: 40px;
+      margin-top: 30vh;
+      text-align: center;
+      color: lightgray;
+    }
+    iron-pages{
+      padding: 10px;
     }
   </style>
   <template>
     <template is="dom-if" if="{{!activityReady}}">
       <div class="spinner">
-        <paper-spinner active="{{!activityReady}}"></paper-spinner>
+        <p>Caricamento...</p>
+        <paper-spinner active="true"></paper-spinner>
       </div>
     </template>
     <iron-pages id="activities" attr-for-selected="data-route"  selected="{{route}}" hidden$="{{!activityReady}}">
@@ -93,10 +99,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       onActivityInit:function(activity){
+
         if(!!this.activities[activity.getIdentifier()] && !(!!this.attached[activity.getIdentifier()])){
-          this.attached[activity.getIdentifier()]=activity;
+          this.attachedAct[activity.getIdentifier()]=activity;
         }
-        if(this.activities.length === this.attached.length) this._createRoutes();
+        if(this.activities.length === this.attachedAct.length){
+          this._createRoutes();
+        }
       },
 
       onActivityReady:function(){
@@ -110,11 +119,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         // add #! before urls
         page({hashbang: true});
-
         this.fireRouterReady();
       },
 
       _attachActivities:function(activities){
+        this.attachedAct=[];
         this.activities=[];
         for(var i in activities){
           var elem = document.createElement(activities[i].name);
@@ -165,7 +174,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         activityReady   : {type: Boolean, value:false, notify:true},
         currentActivity : Object,
         activities      : Array,
-        attached        : Array,
+        attachedAct     : Array,
         settings        : Object,
         route           : String,
         params          : Object
