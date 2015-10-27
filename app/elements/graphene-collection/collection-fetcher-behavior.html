@@ -1,0 +1,52 @@
+<script>
+  var collectionFetcherBehavior = {
+    init:function(){
+      this.reset();
+    },
+
+    reset:function(firstUrl){
+      var client = this.$$('[role=client]');
+      if(!!client){this.fetcher = client;}
+      else{log.warn('collection fetcher client not found in dom');}
+
+      this.results = {};
+      this.cache   = {};
+      this.cursor  = {};
+      this.status  = {};
+      this.fetchPage(firstUrl);
+    },
+
+    fetchNext:function(){
+      this.fetchPage(this.cursor.next);
+    },
+
+    fetchPrv:function(){
+      this.fetchPage(this.cursor.prv);
+    },
+
+    fetchPage:function(pageUrl){
+      if(!(!!this.status[pageUrl])){
+        this.status[pageUrl]='pending';
+        this.$$('[role=client]').fetch(pageUrl)
+          .then(function(res){
+            this.status  [pageUrl] = 'cached';
+            this.cache   [pageUrl] = res;
+            this.results [pageUrl] = res;
+            this.cursor = res.cursor;
+          }.bind(this))
+          .catch(function(err){
+            delete this.status[pageUrl];
+          }.bind(this));
+      }
+    },
+
+    properties:{
+      client   : Object,
+      firstUrl : String,
+      status   : Object,
+      cache    : Object,
+      cursor   : Object,
+      results  : Object
+    }
+  }
+</script>
