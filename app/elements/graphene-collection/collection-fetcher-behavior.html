@@ -27,7 +27,7 @@
     fetchPage:function(pageUrl){
       if(!(!!this.status[pageUrl])){
         this.status[pageUrl]='pending';
-        this.$$('[role=client]').fetch(pageUrl)
+        this.fetcher.fetch(pageUrl)
           .then(function(res){
             this.status  [pageUrl] = 'cached';
             this.cache   [pageUrl] = res;
@@ -41,7 +41,7 @@
     },
 
     properties:{
-      client   : Object,
+      fetcher  : Object,
       firstUrl : String,
       status   : Object,
       cache    : Object,

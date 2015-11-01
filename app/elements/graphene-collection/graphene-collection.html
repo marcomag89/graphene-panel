@@ -12,12 +12,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="graphene-collection">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <div>Hello from <span>{{foo}}</span></div>
+    <graphene-client role = "client" ></graphene-client>
+    <graphene-doc role= "doc" on-doc-change = "_onQueryChange"></graphene-doc>
   </template>
   <script>
   (function() {
@@ -25,13 +21,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
       is: 'graphene-collection',
+      behavior:[collectionFetcherBehavior],
+
+      _onModelChange:function(){
+        this.role.doc.setAction(apiSettings.actions[this.model].collection);
+      },
+
+      _onQueryChange:function(){
+
+      },
 
       properties: {
-        foo: {
-          type: String,
-          value: 'graphene-collection',
-          notify: true
-        }
+        model  : {type:String, observer:'_onModelChange'},
+        doc    : Object,
+
+        search : {type:String,  value:'',   observer:'_onQueryChange'},
+        sortBy : {type:String,  value:null, observer:'_onQueryChange'},
+        ascend : {type:Boolean, value:true, observer:'_onQueryChange'}
       }
     });
   })();
