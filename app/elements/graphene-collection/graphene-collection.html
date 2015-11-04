@@ -9,11 +9,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="collection-fetcher-tools.html">
+<link rel="import" href="collection-fetcher-behavior.html">
 <dom-module id="graphene-collection">
   <template>
     <graphene-client role = "client" ></graphene-client>
-    <graphene-doc role= "doc" on-doc-change = "_onQueryChange"></graphene-doc>
+    <graphene-doc    role = "doc"  on-doc-update= "_onDocUpdate"></graphene-doc>
   </template>
   <script>
   (function() {
@@ -21,23 +22,79 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
       is: 'graphene-collection',
-      behavior:[collectionFetcherBehavior],
+      behaviors:[collectionFetcherBehavior],
+
+      attached:function(){
+        this._elements={};
+        this._elements.doc = this.$$('[role = doc]');
+      },
+
+      _onDocUpdate:function(e){
+        this._reqUrl = e.detail[0].url;
+        this.refresh();
+      },
+
+      getElementStruct:function(){
+        var collectionNode = this.$$('[role = doc]').doc[0]['response-data'].Collection[0];
+        return collectionNode;
+      },
+
+      getColumns:function(){
+        return this.$$('[role=doc]').doc[0].interface['item-flat-struct'];
+      },
 
       _onModelChange:function(){
-        this.role.doc.setAction(apiSettings.actions[this.model].collection);
+        var actionName = apiSettings.actions[this.modelName].collection;
+        this._elements.doc.setActionName(actionName);
       },
 
       _onQueryChange:function(){
-
+        try{
+          this.search  = (!!this.search) ? this.search : '';
+          this.sortBy  = (!!this.sortBy) ? this.sortBy.toUpperCase() : '';
+          this.refresh();
+        }catch(e){console.log('non va')};
       },
 
-      properties: {
-        model  : {type:String, observer:'_onModelChange'},
-        doc    : Object,
 
-        search : {type:String,  value:'',   observer:'_onQueryChange'},
-        sortBy : {type:String,  value:null, observer:'_onQueryChange'},
-        ascend : {type:Boolean, value:true, observer:'_onQueryChange'}
+
+      _getCursor         : function(response) {return response.cursor;},
+      _getResult         : function(response) {return response.Collection;},
+      _getNextPageUrl    : function(cursor)   {return cursor.nxt;},
+      _getPrevPageUrl    : function(cursor)   {return cursor.prv},
+
+      _getCurrentPageUrl : function(cursor){
+        if(!!cursor && !!cursor.cur) return cursor.cur;
+        if(!!this._reqUrl){
+          return this._getQueryUrl(this._reqUrl);
+        }
+        else {
+          return null;
+        }
+      },
+
+      _getQueryUrl:function(url){
+        var q='?Q=0';
+        if(this.search!== '')q+='&search='+this.search;
+        if(this.sortBy!== '')q+='&sort_by='+this.sortBy;
+        q+=(this.discend)? '&sort_discend=0':'&sort_discend=1';
+        return url+q;
+      },
+
+      _getPageIndex:function(cursor){
+        var kv = collectionFetcherTools.getJsonFromUrl(cursor.cur);
+        return parseInt(kv['page_no']);
+      },
+
+
+      properties: {
+        _elements  : Object,
+        _reqUrl    : String,
+
+        modelName  : {type:String,  observer:'_onModelChange', notify:true},
+        search     : {type:String,  value:'',   observer:'_onQueryChange'},
+        sortBy     : {type:String,  value:null, observer:'_onQueryChange'},
+        discend    : {type:Boolean, value:true, observer:'_onQueryChange'}
       }
     });
   })();

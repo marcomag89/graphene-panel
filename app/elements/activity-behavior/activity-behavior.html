@@ -50,6 +50,9 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
     setReady:function(){
       this.activityManager.onActivityReady();
     },
+    unsetReady:function(){
+      this.activityManager.activityReady=false;
+    },
 
     properties:{
       isActivity      : {type:Boolean, value:true},

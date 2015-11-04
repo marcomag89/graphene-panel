@@ -8,7 +8,7 @@ var apiSettings = {
   actions : {
     users:{
       crud       : 'USERS.$CRUD',
-      collection : 'USERS.COLLECTION'
+      collection : 'USERS.READ_COLLECTION'
     }
   }
 };

@@ -86,7 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <!-- Main Content -->
         <div class="content">
-          <app-activity-router></app-activity-router>
+          <app-activity-router id="router"></app-activity-router>
         </div>
       </paper-scroll-header-panel>
     </paper-drawer-panel>
@@ -107,14 +107,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.searchVisible=!this.searchVisible;
         if(!old){
           this.scrollPageToTop();
-          document.querySelector('#searchBox').focus();
-          //this.$$('#searchBox').focus();
+          this.$$('#searchBox').focus();
         }
       },
 
       _clearSearch:function(){
         this.searchValue='';
         this.searchVisible=false;
+      },
+
+      _onSearchValueChange:function(n){
+        clearTimeout(this._lastSearch);
+        this._lastSearch = setTimeout(
+          function(){
+            try{ this.$.router.onSearch(n);}
+            catch(e){}
+          }.bind(this),600);
+      },
+
+      _sendRefresh:function(){
+        this.$.router.onRefresh();
       },
 
       _onHeaderTransform:function(e){
@@ -140,17 +152,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         document.dispatchEvent(event);
       },
 
-      _onSearchValueChange:function(n){
-        clearTimeout(this._lastSearch);
-        this._lastSearch = setTimeout(
-          function(){
-            try{ this.currentActivity.onSearch(n);}
-            catch(e){}
-          }.bind(this),600);
-      },
-
       properties: {
-        searchVisible:{type:Boolean, value:false}
+        searchVisible:{type:Boolean, value:false},
+        searchValue : {type:String, observer:'_onSearchValueChange',notify:true}
       }
     });
   })();

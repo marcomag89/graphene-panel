@@ -9,10 +9,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="../activity-list-behavior/activity-list-behavior.html">
 <dom-module id="act-list">
+  <style>
+    .tblHeader{
+      cursor: pointer;
+    }
+  </style>
   <template>
-    <graphene-collection results="{{results}}"></graphene-collection>
+    <graphene-collection role="collection-fetcher" ></graphene-collection>
+    <table>
+      <tr>
+        <template is="dom-repeat" items="{{columns}}">
+          <th>
+            <div class="tblHeader horizontal layout">
+              <div class="flex" on-click="_sortClick" name="{{item}}">{{item}}</div>
+              <iron-icon on-click="_sortClick" id="icon" name$="{{item}}" icon="{{_getIcon(item)}}"></iron-icon>
+            </div>
+          </th>
+        </template>
+      </tr>
+      <template is="dom-repeat" items="{{collectionItems}}" as="colItem">
+        <tr>
+          <template is="dom-repeat" items="{{columns}}" as="colKey">
+            <td><span>{{_getValue(colKey,colItem)}}</span></td>
+          </template>
+        </tr>
+      </template>
+    </table>
+    <collection-pagination role="pagination" ></collection-pagination>
   </template>
   <script>
   (function() {
@@ -20,15 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
       is: 'act-list',
-      behaviors:[activityBehavior],
-
-      onStart:function(){
-        this.setReady();
-      },
-
-      properties: {
-        results : Array
-      }
+      behaviors:[activityListBehavior]
     });
   })();
   </script>
