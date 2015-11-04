@@ -1,0 +1,57 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<script>
+  /*
+   var app = null;
+
+   var onRouteChange = function(data){
+   app.setRoute(this.dataRoute,data.params);
+   app.scrollPageToTop();
+   };
+
+   window.addEventListener('WebComponentsReady', function() {
+   app = document.querySelector('app-index');
+   var activities = [];
+   for(var i in routing) {
+   var postfix = '';
+   var prefix  = '';
+   if(!!routing[i].settings){
+   if(!!routing[i].settings.postfix){postfix = '-'+routing[i].settings.postfix;}
+   if(!!routing[i].settings.prefix) {prefix  = routing[i].settings.prefix+'-';}
+   }
+   routing[i].dataRoute = prefix+routing[i].activity+postfix;
+
+   if(activities.indexOf(routing[i].activity) === -1){
+   activities.push({name:routing[i].activity, settings:routing[i].settings});
+   }
+   }
+   app.setActivities(activities);
+   });
+
+   window.addEventListener('ActivitiesReady',function(e){
+   var menuItems  = [];
+   for(var i in routing){
+   if(routing[i].menu !== undefined ){
+   menuItems.push({
+   activity : routing[i].dataRoute,
+   href     : routing[i].menu,
+   icon     : routing[i].icon,
+   name     : routing[i].title
+   });
+   }
+   page(routing[i].path, onRouteChange.bind(routing[i]));
+   }
+   // add #! before urls
+   page({hashbang: true});
+   app.setMenuItems(menuItems);
+   });
+   */
+</script>
