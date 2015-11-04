@@ -1,0 +1,120 @@
+<script>
+  var actListBhImpl = {
+
+    start: function () {
+      this.columns = null;
+      this.fetcher = this._getCollectionFetcher();
+      this.pagination = this._getPagination();
+      this.fetcher.addEventListener('results', function (e) {
+        this._onCollectionResults(e)
+      }.bind(this));
+      this.pagination.addEventListener('fetch-next', function (e) {
+        this._onFetchNext()
+      }.bind(this));
+      this.pagination.addEventListener('fetch-prev', function (e) {
+        this._onFetchPrev()
+      }.bind(this));
+
+      this.fetcher.modelName = this._getModelName();
+      this._getCollectionFetcher().start();
+      this.onStart();
+    },
+
+    _onCollectionResults: function (e) {
+      this._getColumns();
+      if (this._isContinuous()) {
+        this.collectionItems = e.detail.continuousResults;
+      }
+      else {
+        this.collectionItems = e.detail.results;
+      }
+      this.setReady();
+    },
+
+    _onFetchNext: function () {
+      this.fetcher.fetchNext();
+    },
+
+    _onFetchPrev: function () {
+      this.fetcher.fetchNext();
+    },
+
+    onSearch: function (q) {
+      this.fetcher.search = q;
+    },
+
+    onRefresh: function () {
+      this.unsetReady();
+      this.fetcher.refresh();
+    },
+
+    _sortClick: function (e) {
+      var fieldName = this.getFieldName(e.target.name);
+      if (this.fetcher.sortBy === fieldName) {
+        this.fetcher.discend = !this.fetcher.discend;
+      }
+      this.fetcher.sortBy = fieldName;
+      this.$$('#icon[name=' + e.target.name + ']').icon = this._getIcon(e.target.name);
+    },
+
+    getFieldName: function (name) {
+      var nameTok = name.split('_');
+      nameTok.splice(0, 1);
+      return nameTok.join('_').toUpperCase();
+    },
+
+    _getColumns: function () {
+      if (this.columns === null) {
+        var tCols = [];
+        var cols = Object.keys(this.fetcher.getColumns());
+        for (var col in cols) {
+          if (!cols[col].endsWith('id') && !cols[col].endsWith('version')) {
+            tCols.push(cols[col]);
+          }
+        }
+        this.columns = tCols;
+      }
+      return this.columns;
+    },
+
+
+    _getIcon: function (itemName) {
+      var name = this.getFieldName(itemName);
+      if (name === this.fetcher.sortBy && this.fetcher.discend) return 'expand-less';
+      else if (name === this.fetcher.sortBy && !this.fetcher.discend) return 'expand-more';
+      else if (!(name === this.fetcher.sortBy)) return 'b';
+    },
+
+    _getValue: function (colName, item, bla) {
+      var ret = item;
+      var path = colName.split('_');
+      for (var node in path) {
+        ret = ret[path[node]];
+      }
+      return ret;
+    },
+
+
+    _isContinuous: function () {
+      return true
+    },
+    _getModelName: function () {
+      return this.params.model
+    },
+    _getCollectionFetcher: function () {
+      return this.$$('[role = collection-fetcher]')
+    },
+    _getPagination: function () {
+      return this.$$('[role = pagination]')
+    },
+
+    properties: {
+      collectionItems: {type: Array, notify: true},
+      columns: {type: Array, notify: true},
+      pagination: Object
+    }
+
+  };
+
+  var activityListBehavior = [activityBehavior, actListBhImpl];
+</script>

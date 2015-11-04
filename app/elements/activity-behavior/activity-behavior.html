@@ -1,0 +1,73 @@
+<!--
+COMPORTAMENTO ACTIVITY
+Definisce l'interfaccia ed un comportamento di un activity vuota
+
+-->
+<link rel="import" href="app-events-behavior.html">
+<script>
+
+  var activityBehaviorImpl = {
+
+    attached: function () {
+      this._init();
+    },
+
+    _init: function () {
+      this.getIdentifier();
+      this.setAttribute('data-route', this.activityId);
+      document.addEventListener('sys-application-status-changed', function (e) {
+        this._onApplicationStatusChange(e);
+      }.bind(this), false);
+      this.onInit();
+      //console.log('init: '+this.activityId);
+      this.activityManager.onActivityInit(this);
+    },
+
+    setActivityManager: function (activityManager) {
+      this.activityManager = activityManager;
+    },
+
+    getIdentifier: function () {
+      if (!(!!this.activityId)) {
+        this.activityId = this.tagName.toLowerCase();
+        //console.log(this.settings);
+        if (!!this.settings && !!this.settings.postfix) {
+          this.activityId += '-' + this.settings.postfix.toLowerCase();
+        }
+      }
+      return this.activityId;
+    },
+
+    _setPars: function (pars) {
+      this.params = pars;
+      this.onParamsChange(pars);
+    },
+
+    start: function () {
+      this.onStart();
+    },
+
+    stop: function () {
+      this.onStop();
+    },
+
+    setReady: function () {
+      this.activityManager.onActivityReady();
+    },
+    unsetReady: function () {
+      this.activityManager.activityReady = false;
+    },
+
+    properties: {
+      isActivity: {type: Boolean, value: true},
+      activityId: String,
+      currentActivity: String,
+      params: Object,
+      appStatus: String,
+      settings: Object,
+      activityManager: Object,
+    }
+  };
+
+  var activityBehavior = [appEventsBehavior, activityBehaviorImpl];
+</script>

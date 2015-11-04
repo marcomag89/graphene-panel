@@ -1,0 +1,220 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="app-activity-router">
+  <style>
+    div.spinner {
+      margin-top: 30vh;
+      text-align: center;
+      color: lightgray;
+    }
+
+    iron-pages {
+      padding: 10px;
+    }
+  </style>
+  <template>
+    <template is="dom-if" if="{{!activityReady}}">
+      <div class="spinner">
+        <p>Caricamento...</p>
+        <paper-spinner active="true"></paper-spinner>
+      </div>
+    </template>
+    <iron-pages id="activities" attr-for-selected="data-route" selected="{{route}}" hidden$="{{!activityReady}}">
+      <!-- activities -->
+    </iron-pages>
+  </template>
+
+  <script src="../../bower_components/page/page.js"></script>
+  <script src="../../conf/routing.js"></script>
+
+  <script>
+
+    (function () {
+      'use strict';
+
+      Polymer({
+        is: 'app-activity-router',
+
+        attached: function () {
+          this.settings = routing;
+          this.appEnabled = (app.status._display === 'allow');
+          document.addEventListener('app-status-change', function (e) {
+            this._onAppStatusChange(e);
+          }.bind(this), false);
+          if (!(!!app.router)) {
+            app.router = this;
+            this._loadActivities();
+          }
+        },
+
+        _onAppStatusChange: function (e) {
+          this.appEnabled = (e.detail.newStatus === 'allow');
+        },
+
+
+        fireRouterReady: function () {
+          var event = new CustomEvent('router-ready', {detail: this, bubbles: true, cancelable: true});
+          document.dispatchEvent(event);
+        },
+
+        _fireRouteChange: function (route, data) {
+          var event = new CustomEvent('route-change', {
+            detail: {router: this, route: route, data: data},
+            bubbles: true,
+            cancelable: true
+          });
+          document.dispatchEvent(event);
+        },
+
+        onRouteChange: function (route, data) {
+          this.setRoute(route.dataRoute, data.params);
+          this._fireRouteChange(route, data);
+          // app.scrollPageToTop();
+        },
+
+        setRoute: function (route, params) {
+          var oldActivity = this.activities[this.route];
+          var newActivity = this.activities[route];
+          this.currentActivity = newActivity;
+
+          var equals = false;
+          try {
+            equals = (oldActivity.getIdentifier() === newActivity.getIdentifier());
+          }
+          catch (e) {
+            equals = false;
+          }
+          if (equals) {
+            this.currentActivity._setPars(params)
+          }
+          else {
+            this.activityReady = false;
+            try {
+              oldActivity.stop();
+            } catch (e2) {
+            }
+            try {
+              if (this.appEnabled) {
+                this.currentActivity._setPars(params);
+                this.currentActivity.start();
+              }
+            } catch (e1) {
+            }
+          }
+          this.route = route;
+          this.params = params;
+        },
+
+        onSearch: function (q) {
+          if (this.appEnabled) {
+            this.currentActivity.onSearch(q);
+          }
+        },
+
+        onRefresh: function (q) {
+          if (this.appEnabled) {
+            this.currentActivity.onRefresh();
+          }
+        },
+
+        onActivityInit: function (activity) {
+
+          if (!!this.activities[activity.getIdentifier()] && !(!!this.attached[activity.getIdentifier()])) {
+            this.attachedAct[activity.getIdentifier()] = activity;
+          }
+          if (this.activities.length === this.attachedAct.length) {
+            this._createRoutes();
+          }
+        },
+
+        onActivityReady: function () {
+          this.activityReady = true;
+        },
+
+        _createRoutes: function () {
+          var routing = this.settings;
+          for (var i in routing) {
+            page(routing[i].path, this.onRouteChange.bind(this, routing[i]));
+          }
+          // add #! before urls
+          page({hashbang: true});
+          this.fireRouterReady();
+        },
+
+        _attachActivities: function (activities) {
+          this.attachedAct = [];
+          this.activities = [];
+          for (var i in activities) {
+            var elem = document.createElement(activities[i].name);
+            elem.settings = activities[i].settings;
+            this.activities[elem.getIdentifier()] = elem;
+            elem.setActivityManager(this);
+            Polymer.dom(this.$$('#activities')).appendChild(elem);
+          }
+        },
+
+        _loadActivities: function () {
+          var routing = this.settings;
+          var activities = [];
+          for (var i in routing) {
+            var postfix = '';
+            var prefix = '';
+            if (!!routing[i].settings) {
+              if (!!routing[i].settings.postfix) {
+                postfix = '-' + routing[i].settings.postfix;
+              }
+              if (!!routing[i].settings.prefix) {
+                prefix = routing[i].settings.prefix + '-';
+              }
+            }
+            routing[i].dataRoute = prefix + routing[i].activity + postfix;
+            if (activities.indexOf(routing[i].activity) === -1) {
+              activities.push({name: routing[i].activity, settings: routing[i].settings});
+            }
+          }
+          this._attachActivities(activities);
+        },
+
+        _onAppEnabledChange: function (nv, ov) {
+          if (!nv) {
+            try {
+              this.activityReady = false;
+              this.currentActivity.stop();
+            }
+            catch (e) {
+            }
+          } else {
+            try {
+              this.activityReady = false;
+              this.currentActivity._setPars(this.params);
+              this.currentActivity.start();
+            }
+            catch (e) {
+            }
+          }
+        },
+
+        properties: {
+          appEnabled: {type: Boolean, value: false, observer: '_onAppEnabledChange'},
+          activityReady: {type: Boolean, value: false, notify: true},
+          currentActivity: Object,
+          activities: Array,
+          attachedAct: Array,
+          settings: Object,
+          route: String,
+          params: Object
+        }
+      });
+    })();
+  </script>
+</dom-module>

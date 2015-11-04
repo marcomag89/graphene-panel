@@ -1,0 +1,96 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="app-session-display">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+      }
+
+      div#userInfo {
+        font-size: 1.3em;
+        color: valr(--dark-primary-color);
+      }
+
+      div#userGroups {
+        font-size: 0.5em;
+        color: var(--light-primary-color);
+      }
+
+    </style>
+    <graphene-client id="client" on-status-change="_onStatusChange"></graphene-client>
+    <div class="horizontal layout">
+      <div id="userInfo" class="flex">
+        <div id="userName"><span>{{user.name}}</span></div>
+        <div id="userGroups">
+          <span>{{userGroups}}</span>
+        </div>
+      </div>
+      <template is="dom-if" if="{{aclEnabled}}">
+        <div id="logoutBtn">
+          <paper-icon-button icon="exit-to-app" on-tap="_logout"></paper-icon-button>
+        </div>
+      </template>
+    </div>
+    </div>
+  </template>
+  <script>
+    (function () {
+      'use strict';
+
+      var wordReference = {
+        words: {
+          'ANONIMOUS': 'anonimous'
+        }
+      };
+      Polymer({
+        is: 'app-session-display',
+
+        _onStatusChange: function (e) {
+          this.aclEnabled = e.detail.aclEnabled;
+          if (!!e.detail.user) {
+            var user = JSON.parse(JSON.stringify(e.detail.user));
+            var anonimousKeyword = 'ANONIMOUS';
+            if (!!user) {
+              if (!(!!user.name))user.name = this.wordReference.words[anonimousKeyword];
+              if (!!user.groups) {
+                this._setGroupStiring(user.groups);
+              }
+            }
+            this.user = user;
+          }
+        },
+
+        _setGroupStiring: function (groups) {
+          var ret = '';
+          for (var g in groups) {
+            ret += groups[g].replace('_', ' ') + ', ';
+          }
+          this.userGroups = ret;
+        },
+
+        _logout: function () {
+          this.$.client.logout();
+        },
+
+        properties: {
+          aclEnabled: Boolean,
+          user: Object,
+          userGroups: String,
+          wordReference: {type: Object, value: wordReference}
+        }
+      });
+    })();
+  </script>
+</dom-module>
