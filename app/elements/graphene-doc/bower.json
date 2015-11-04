@@ -1,5 +1,5 @@
 {
-  "name": "my-list",
+  "name": "graphene-doc",
   "version": "1.0.3",
   "authors": [
     "Anonymous <anonymous@example.com>"
@@ -10,9 +10,9 @@
     "polymer",
     "seed"
   ],
-  "main": "my-list.html",
+  "main": "graphene-doc.html",
   "license": "http://polymer.github.io/LICENSE.txt",
-  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "homepage": "https://github.com/marcomag89/seed-element/",
   "ignore": [
     "/.*",
     "/test/"
@@ -21,7 +21,6 @@
     "polymer": "Polymer/polymer#^1.1.0"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
-    "web-component-tester": "*"
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
   }
 }
