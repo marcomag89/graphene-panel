@@ -9,15 +9,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="../activity-crud-behavior/activity-crud-behavior.html">
 <dom-module id="act-crud">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <div>Hello from <span>{{foo}}</span></div>
+    <style>:host {
+      display: block;
+    }</style>
+    <graphene-crud role="crud-client"></graphene-crud>
+
+    <h1>User</h1>
+    <paper-input
+      label="username"
+      disabled="{{isRead}}"
+      always-float-label="{{readOnly}}"
+      value="{{model.User.username}}"
+      handle-field="USER_USERNAME"
+      ></paper-input>
+
+    <div class="buttons-bar">
+      <paper-button role="edit">Edit</paper-button>
+      <paper-button role="back">Back</paper-button>
+      <paper-button role="delete">Delete</paper-button>
+      <paper-button role="save">Save</paper-button>
+      <paper-button role="create">Create</paper-button>
+    </div>
   </template>
   <script>
     (function () {
@@ -25,15 +40,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       Polymer({
         is: 'act-crud',
-        behaviors: [activityBehavior],
-
-        properties: {
-          foo: {
-            type: String,
-            value: 'act-modules',
-            notify: true
-          }
-        }
+        behaviors: [activityCrudBehavior],
       });
     })();
   </script>

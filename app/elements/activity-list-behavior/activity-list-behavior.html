@@ -68,7 +68,11 @@
         var tCols = [];
         var cols = Object.keys(this.fetcher.getColumns());
         for (var col in cols) {
-          if (!cols[col].endsWith('id') && !cols[col].endsWith('version')) {
+          if (cols[col].endsWith('id')) {
+            this.idCol = cols[col];
+          } else if (cols[col].endsWith('version')) {
+            this.versionCol = cols[col];
+          } else {
             tCols.push(cols[col]);
           }
         }
@@ -85,7 +89,34 @@
       else if (!(name === this.fetcher.sortBy)) return 'b';
     },
 
-    _getValue: function (colName, item, bla) {
+    _detailToMe: function (e) {
+      var id = this._getAttrRecoursive('itemId', e.target);
+      page('/' + this._getModelName() + '/read/' + id);
+    },
+
+    _toCreate: function () {
+      page('/' + this._getModelName() + '/create/new');
+    },
+
+    _getAttrRecoursive: function (name, target) {
+      var ret = null;
+      while (ret === null && !!target) {
+        var attr = target.getAttribute(name);
+        if (!!attr) {
+          ret = attr;
+        }
+        else {
+          target = target.parentNode;
+        }
+      }
+      return ret;
+    },
+
+    _getId: function (item) {
+      return this._getValue(this.idCol, item);
+    },
+
+    _getValue: function (colName, item) {
       var ret = item;
       var path = colName.split('_');
       for (var node in path) {
@@ -109,6 +140,8 @@
     },
 
     properties: {
+      idCol: String,
+      versionCol: String,
       collectionItems: {type: Array, notify: true},
       columns: {type: Array, notify: true},
       pagination: Object

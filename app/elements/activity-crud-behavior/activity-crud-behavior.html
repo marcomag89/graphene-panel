@@ -1,0 +1,206 @@
+<!--<link rel="import" href="activity-crud-style.html">
+-->
+<script>
+  var actCrudBhImpl = {
+    start: function () {
+      this.mode = this._getCurrentMode().toLowerCase();
+      this._bindComponents();
+      this._addComponentsListeners();
+      this._updateComponentsAttr();
+      this._setComponentStyles();
+      this.crudClient.modelName = this._getModelName();
+      this.crudClient.checkReady();
+    },
+
+    _bindComponents: function () {
+      this.crudClient = this._getCrudClient();
+      this.btnEdit = this._getEditButton();
+      this.btnBack = this._getBackButton();
+      this.btnDelete = this._getDeleteButton();
+      this.btnSave = this._getSaveButton();
+      this.btnCreate = this._getCreateButton();
+      this.btnBar = this._getButtonBar();
+    },
+
+    _addComponentsListeners: function () {
+      this.btnEdit.addEventListener('click', function (e) {
+        this._toEdit()
+      }.bind(this));
+      this.btnBack.addEventListener('click', function (e) {
+        this._toRead()
+      }.bind(this));
+      this.btnDelete.addEventListener('click', function (e) {
+        this._onClientReady(e)
+      }.bind(this));
+      this.btnSave.addEventListener('click', function (e) {
+        this._onClientReady(e)
+      }.bind(this));
+      this.btnCreate.addEventListener('click', function (e) {
+        this._onClientReady(e)
+      }.bind(this));
+
+      this.crudClient.addEventListener('crud-ready', function (e) {
+        this._onClientReady(e)
+      }.bind(this));
+    },
+
+    _setComponentStyles: function () {
+      this.btnBar.style.position = 'absolute';
+      this.btnBar.style.bottom = '10px';
+      this.btnBar.style.right = '20px';
+    },
+
+    _updateComponentsAttr: function () {
+      if (!!this.btnEdit) {
+        this.btnEdit.hidden = this._isEdit();
+        this.btnEdit.raised = true;
+      }
+      if (!!this.btnBack)this.btnBack.hidden = this._isRead();
+      if (!!this.btnDelete) {
+        this.btnDelete.hidden = this._isRead();
+        this.btnDelete.raised = true;
+
+      }
+      if (!!this.btnSave) {
+        this.btnSave.hidden = !this._isEdit();
+        this.btnSave.raised = true;
+      }
+      if (!!this.btnCreate)this.btnCreate.hidden = !this._isCreate();
+
+
+    },
+
+    _onClientReady: function (e) {
+      if (this.mode === 'read' || this.mode === 'edit') {
+        this.r();
+      }
+      if (this.mode === 'create') {
+        this.onStart();
+      }
+    },
+
+
+    c: function () {
+      this.unsetReady();
+      this.crudClient.create(this.model)
+        .then(function (res) {
+          this._onModelCreateSuccess(res);
+        }.bind(this))
+        .catch(function (err) {
+          console.error(err)
+        }.bind(this));
+    },
+
+    r: function () {
+      this.unsetReady();
+      this.crudClient.read(this._getCurrentId())
+        .then(function (res) {
+          this.model = res;
+          this._updateFields();
+          this.onStart();
+        }.bind(this))
+        .catch(function (err) {
+          console.error(err)
+        }.bind(this));
+    },
+
+    u: function () {
+
+    },
+
+    d: function () {
+
+    },
+
+    onStart: function () {
+      this.setReady();
+    },
+
+    _onModelCreateSuccess: function (createdModel) {
+      var modelClass = Object.keys(createdModel)[0];
+      page('/' + this._getModelName() + '/read/' + createdModel[modelClass].id);
+    },
+
+    _getCrudClient: function () {
+      return this.$$('[role=crud-client]');
+    },
+    _getModelName: function () {
+      return this.params.model
+    },
+    _getCurrentMode: function () {
+      return this.params.mode
+    },
+    _getCurrentId: function () {
+      return this.params.id
+    },
+
+    _getEditButton: function () {
+      return this.$$('[role=edit]');
+    },
+    _getBackButton: function () {
+      return this.$$('[role=back]');
+    },
+    _getDeleteButton: function () {
+      return this.$$('[role=delete]');
+    },
+    _getSaveButton: function () {
+      return this.$$('[role=save]');
+    },
+    _getCreateButton: function () {
+      return this.$$('[role=create]');
+    },
+    _getButtonBar: function () {
+      return this.$$('.buttons-bar');
+    },
+    _updateFields: function () {
+
+    },
+
+    _readFields: function () {
+
+    },
+
+    _toEdit: function () {
+      page('/' + this._getModelName() + '/edit/' + this._getCurrentId());
+    },
+
+    _toRead: function () {
+      page('/' + this._getModelName() + '/read/' + this._getCurrentId());
+    },
+
+    _onModeChange: function () {
+      this._updateComponentsAttr();
+    },
+    _isRead: function () {
+      return (this.mode !== 'edit' && this.mode !== 'create');
+    },
+    _isEdit: function () {
+      return this.mode === 'edit';
+    },
+    _isCreate: function () {
+      return this.mode === 'create';
+    },
+
+    onParamsChange: function (pars) {
+      var mode = this._getCurrentMode().toLowerCase();
+      if (mode === 'read' && this.mode !== 'read') {
+        this.start();
+      }
+      else {
+        this.mode = this._getCurrentMode().toLowerCase();
+      }
+    },
+
+    properties: {
+      isRead: {type: Boolean, computed: '_isRead(mode)'},
+      isEdit: {type: Boolean, computed: '_isEdit(mode)'},
+      isCreate: {type: Boolean, computed: '_isCreate(mode)'},
+
+      mode: {type: String, value: null, observer: '_onModeChange'},
+      crudClient: Object,
+      model: Object
+    }
+
+  };
+  var activityCrudBehavior = [activityBehavior, actCrudBhImpl]
+</script>

@@ -15,13 +15,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     .tblHeader {
       cursor: pointer;
     }
+
+    .item-row {
+      cursor: pointer;
+      height: 50px;
+
+    }
+
+    td.item-cell {
+      padding: 10px 20px 10px 20px;
+      border: none;
+      border-bottom: 1px solid gray;
+
+    }
+
+    th.item-cell {
+      border: none;
+      border-bottom: 3px solid gray;
+      font-size: 1.2em;
+      text-align: center;
+      font-weight: 300;
+      min-height: 200px;
+    }
+
+    .item-row:hover {
+      background-color: var(--default-highlight-background-color);
+      color: var(--default-highlight-text-color);
+    }
+
+    .creator {
+      position: fixed;
+      bottom: 15px;
+      right: 20px;
+    }
   </style>
   <template>
     <graphene-collection role="collection-fetcher"></graphene-collection>
+    <paper-fab on-click="_toCreate" class="creator" icon="add"></paper-fab>
+
     <table>
       <tr>
         <template is="dom-repeat" items="{{columns}}">
-          <th>
+          <th class="item-cell">
             <div class="tblHeader horizontal layout">
               <div class="flex" on-click="_sortClick" name="{{item}}">{{item}}</div>
               <iron-icon on-click="_sortClick" id="icon" name$="{{item}}" icon="{{_getIcon(item)}}"></iron-icon>
@@ -30,9 +65,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </template>
       </tr>
       <template is="dom-repeat" items="{{collectionItems}}" as="colItem">
-        <tr>
+        <tr class="item-row">
           <template is="dom-repeat" items="{{columns}}" as="colKey">
-            <td><span>{{_getValue(colKey,colItem)}}</span></td>
+            <td class="item-cell" on-click="_detailToMe" itemId$="{{_getId(colItem)}}">
+              <span>{{_getValue(colKey,colItem)}}</span><br/>
+            </td>
           </template>
         </tr>
       </template>

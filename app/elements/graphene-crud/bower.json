@@ -1,0 +1,29 @@
+{
+  "name": "graphene-crud",
+  "version": "1.0.4",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "graphene-crud.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/GrapheneElements/graphene-crud/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "graphene-client": "GrapheneElements/graphene-client",
+    "graphene-doc": "GrapheneElements/graphene-doc"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  }
+}
