@@ -43,6 +43,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       color: var(--menu-link-color);
     }
 
+    .paper-font-subhead {
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+
     @media (max-width: 600px) {
       paper-material {
         width: calc(97.33% - 32px);
@@ -54,7 +59,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
     <paper-drawer-panel id="paperDrawerPanel">
       <!-- Drawer Scroll Header Panel -->
-      <paper-scroll-header-panel drawer fixed>
+      <paper-scroll-header-panel drawer fixed id="drawer">
 
         <!-- Drawer Toolbar -->
         <paper-toolbar id="drawerToolbar">
@@ -68,11 +73,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </paper-scroll-header-panel>
 
       <!-- Main Area -->
-      <paper-scroll-header-panel on-content-scroll="_onContentScroll" on-paper-header-transform="_onHeaderTransform"
-                                 main condenses keep-condensed-header>
+      <paper-scroll-header-panel on-content-scroll="_onContentScroll"
+                                 on-paper-header-transform="_onHeaderTransform"
+                                 main condenses
+                                 id="content"
+        >
 
         <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar" class="tall">
+        <paper-toolbar id="mainToolbar">
 
           <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
           <div class="flex">
@@ -93,19 +101,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout">
-            <div class="app-name">DSA</div>
+            <div class="app-name">
+              <app-locale text="APP_NAME"></app-locale>
+              <b>&nbsp;•&nbsp;</b>
+              <app-locale text="HOME"></app-locale>
+            </div>
           </div>
-
-          <!-- Application sub title -->
+          <!--
+          <!-- Application sub title --
           <div class="bottom bottom-container center horizontal layout">
-            <div class="bottom-title paper-font-subhead">management system</div>
           </div>
+          -->
 
         </paper-toolbar>
 
         <!-- Main Content -->
         <div class="content">
-          <app-router id="router"></app-router>
+          <app-router id="router" on-activities-load="_onActivitiesLoad"></app-router>
         </div>
       </paper-scroll-header-panel>
     </paper-drawer-panel>
@@ -117,6 +129,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       Polymer({
         is: 'app-template',
 
+        _onActivitiesLoad: function () {
+          this.$$('#content').notifyResize();
+          this.$$('#drawer').notifyResize();
+        },
         scrollPageToTop: function () {
           try {
             document.getElementById('mainContainer').scrollTop = 0;
@@ -155,6 +171,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         _onHeaderTransform: function (e) {
+          /*
           var appName = document.querySelector('#mainToolbar .app-name');
           var middleContainer = document.querySelector('#mainToolbar .middle-container');
           var bottomContainer = document.querySelector('#mainToolbar .bottom-container');
@@ -169,7 +186,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           Polymer.Base.transform('scale(' + scaleMiddle + ') translateZ(0)', appName);
           if (detail.y > 20) {
             this.searchVisible = false;
-          }
+           }*/
         },
 
         _onContentScroll: function (e) {

@@ -75,6 +75,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if (!(!!app.router)) {
             app.router = this;
             this._loadActivities(function () {
+              this.fire('activities-load');
               this._initRouter();
             }.bind(this));
           } else {
@@ -151,11 +152,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         _setRoute: function (route, params) {
           this.activityReady = false;
-          console.log('current route: ' + route.activity);
+          console.log('current route: ' + route.activity)
           //Removing oldActivity
-          if (!!this.currentActivity) {
-            this.currentActivity.stop();
-            this.$$('#activitiesContainer').removeChild(this.currentActivity);
+          var oldActivity = this.currentActivity;
+          try {
+            if (!!this.currentActivity) {
+              this.currentActivity.stop();
+              this.fire('activity-stop', this.currentActivity);
+              this.$$('#activitiesContainer').removeChild(this.currentActivity);
+              this.fire('activity-drop', this.currentActivity);
+            }
+          } catch (e) {
           }
 
           //Adding newActivity
@@ -166,11 +173,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.currentActivity = newActivity;
             console.log(this.currentActivity.getIdentifier() + ' init');
             this.$$('#activitiesContainer').appendChild(this.currentActivity);
+            this.fire('activity-append', this.currentActivity);
             //start activity asyncronously
             this.async(function () {
               this.currentActivity.start();
             }.bind(this));
           }.bind(this, newActivity));
+          this.fire('activity-change', {oldActivity: oldActivity, newActivity: this.currentActivity});
         },
 
         onSearch: function (q) {

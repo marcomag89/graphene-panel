@@ -3,23 +3,24 @@
 
     start: function () {
       this.columns = null;
-      this.fetcher = this._getCollectionFetcher();
-      this.pagination = this._getPagination();
-      this.fetcher.addEventListener('results', function (e) {
-        this._onCollectionResults(e)
-      }.bind(this));
-      this.fetcher.addEventListener('collection-status-change', function (e) {
-        this._onCollectionStatusChange(e)
-      }.bind(this));
-      this.pagination.addEventListener('fetch-next', function (e) {
-        this._onFetchNext()
-      }.bind(this));
-      this.pagination.addEventListener('fetch-prev', function (e) {
-        this._onFetchPrev()
-      }.bind(this));
-
-      this.fetcher.modelName = this._getModelName();
-      this._getCollectionFetcher().start();
+      if (!(!!this.fetcher)) {
+        this.fetcher = this._getCollectionFetcher();
+        this.pagination = this._getPagination();
+        this.fetcher.addEventListener('results', function (e) {
+          this._onCollectionResults(e)
+        }.bind(this));
+        this.fetcher.addEventListener('collection-status-change', function (e) {
+          this._onCollectionStatusChange(e)
+        }.bind(this));
+        this.pagination.addEventListener('fetch-next', function (e) {
+          this._onFetchNext()
+        }.bind(this));
+        this.pagination.addEventListener('fetch-prev', function (e) {
+          this._onFetchPrev()
+        }.bind(this));
+        this.fetcher.modelName = this._getModelName();
+      }
+      this.fetcher.start();
       this.onStart();
     },
 
@@ -30,8 +31,7 @@
       }
     },
     _onCollectionResults: function (e) {
-      console.log(e.detail.continuousResults);
-
+      console.log(e);
       this._getColumns();
       if (this._isContinuous()) {
         this.collectionItems = e.detail.continuousResults;
@@ -160,14 +160,18 @@
     _isCompletedCollection: function () {
       return this.collectionStatus === 'completed';
     },
+    stop: function () {
+      this.columns = null;
+    },
 
     onParamsChange: function (pars) {
-      this.unsetReady();
-      console.log(this._getModelName());
-      this.columns = null;
-      this.fetcher = this._getCollectionFetcher();
-      this.pagination = this._getPagination();
-      this.fetcher.modelName = this._getModelName();
+
+      if (!!this.fetcher && this._getModelName() !== this.fetcher.modelName) {
+        this.unsetReady();
+        console.log(this._getModelName());
+        this.columns = null;
+        this.fetcher.modelName = this._getModelName();
+      }
     },
 
     properties: {
