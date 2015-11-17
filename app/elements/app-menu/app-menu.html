@@ -34,7 +34,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-menu class="list" attr-for-selected="data-route" selected="[[selected]]">
       <template is="dom-repeat" items="{{menuItems}}">
         <a data-route$="{{item.name}}" href$="{{item.href}}" on-click="_onItemClick">
-          <paper-ripple></paper-ripple>
           <iron-icon icon$="{{item.icon}}"></iron-icon>
           <app-locale text="{{item.name}}"></app-locale>
         </a>

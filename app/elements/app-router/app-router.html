@@ -25,7 +25,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
     <template is="dom-if" if="{{!activityReady}}">
       <div class="spinner">
-        <p>Caricamento...</p>
+        <p>
+          <app-locale text="LOADING_ACTIVITY"></app-locale>
+        </p>
         <paper-spinner active="true"></paper-spinner>
       </div>
     </template>
@@ -51,16 +53,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         is: 'app-router',
 
         attached: function () {
+          this.appEnabled = app.status._display === 'allow';
+          /// /this.appEnabled = e.detail.newStatus === 'allow';
           document.addEventListener('app-status-change', function (e) {
             this._onAppStatusChange(e);
           }.bind(this), false);
           this._loadRoutingSettings(function (settings) {
             this._onSettingsLoad(settings)
           }.bind(this));
-        },
-
-        _onAppStatusChange: function (e) {
-          this.appEnabled = (e.detail.newStatus === 'allow');
         },
 
         _loadRoutingSettings: function (callback) {
@@ -133,12 +133,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         _onRouteChange: function (route, data) {
-          this.async(function (route, data) {
-            this._setRoute(route, data.params);
-          }.bind(this, route, data));
+          this.routeSig = {route: route, data: data};
+          if (this.appEnabled) {
+            this.async(function () {
+              this._setRoute(this.routeSig.route, this.routeSig.data.params);
+            }.bind(this));
+          }
           this._fireRouteChange(route, data);
 
           //app.scrollPageToTop();
+        },
+
+        _setRoute: function (route, params) {
+          this.activityReady = false;
+          //Removing oldActivity
+          var oldActivity = this.currentActivity;
+          this._dropActivity(oldActivity);
+          this._attachActivity(route.activity, params);
+          this.fire('activity-change', {oldActivity: oldActivity, newActivity: this.currentActivity});
         },
 
         _fireRouteChange: function (route, data) {
@@ -150,36 +162,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           document.dispatchEvent(event);
         },
 
-        _setRoute: function (route, params) {
-          this.activityReady = false;
-          console.log('current route: ' + route.activity)
-          //Removing oldActivity
-          var oldActivity = this.currentActivity;
-          try {
-            if (!!this.currentActivity) {
-              this.currentActivity.stop();
-              this.fire('activity-stop', this.currentActivity);
-              this.$$('#activitiesContainer').removeChild(this.currentActivity);
-              this.fire('activity-drop', this.currentActivity);
+        _dropActivity: function (activity) {
+          if (!!activity) {
+            try {
+              activity.stop();
+              this.fire('activity-stop', activity);
+            } catch (e) {
+              console.error('cannot stop activity')
             }
-          } catch (e) {
+            try {
+              this.$$('#activitiesContainer').removeChild(activity);
+              this.fire('activity-drop', activity);
+            } catch (e) {
+              console.error('cannot drop activity')
+            }
           }
+        },
 
-          //Adding newActivity
-          var newActivity = document.createElement(route.activity);
-          console.log(route.activity + ' created');
-
-          newActivity._init(this, params, function () {
-            this.currentActivity = newActivity;
-            console.log(this.currentActivity.getIdentifier() + ' init');
-            this.$$('#activitiesContainer').appendChild(this.currentActivity);
-            this.fire('activity-append', this.currentActivity);
-            //start activity asyncronously
-            this.async(function () {
-              this.currentActivity.start();
-            }.bind(this));
-          }.bind(this, newActivity));
-          this.fire('activity-change', {oldActivity: oldActivity, newActivity: this.currentActivity});
+        _attachActivity: function (activityName, params) {
+          try {
+            var newActivity = document.createElement(activityName);
+            console.log(activityName + ' created');
+            newActivity._init(this, params, function () {
+              this.currentActivity = newActivity;
+              console.log(this.currentActivity.getIdentifier() + ' init');
+              this.$$('#activitiesContainer').appendChild(this.currentActivity);
+              this.fire('activity-attach', this.currentActivity);
+              //start activity asyncronously
+              this.async(function () {
+                this.currentActivity.start();
+              }.bind(this));
+            }.bind(this, newActivity));
+          } catch (e) {
+            console.error(e);
+          }
         },
 
         onSearch: function (q) {
@@ -202,20 +218,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.activityReady = true;
         },
 
+        _onAppStatusChange: function (e) {
+          this.appEnabled = (e.detail.newStatus === 'allow');
+        },
 
         _onAppEnabledChange: function (nv, ov) {
-          if (!nv) {
+          console.log('app status: ' + nv);
+          if (!nv && !!(this.routeSig)) {
             try {
-              this.activityReady = false;
-              this.currentActivity.stop();
+              this._dropActivity(this.currentActivity);
             }
             catch (e) {
             }
           } else {
             try {
-              this.activityReady = false;
-              this.currentActivity._setPars(this.params);
-              this.currentActivity.start();
+              this._setRoute(this.routeSig.route, this.routeSig.data.params);
             }
             catch (e) {
             }
@@ -225,12 +242,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         properties: {
           appEnabled: {type: Boolean, value: false, observer: '_onAppEnabledChange'},
           activityReady: {type: Boolean, value: false, notify: true},
-          currentActivity: Object,
           activities: Array,
-          attachedAct: Array,
           settings: Object,
-          route: String,
-          params: Object
+
+          routeSig: Object,
+          currentActivity: Object
         }
       });
     })();
