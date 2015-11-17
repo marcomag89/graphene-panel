@@ -23,6 +23,52 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <graphene-doc id="delete-doc"></graphene-doc>
   </template>
   <script>
+    JSON.flatten = function (data) {
+      var result = {};
+
+      function recurse(cur, prop) {
+        if (Object(cur) !== cur) {
+          result[prop] = cur;
+        } else if (Array.isArray(cur)) {
+          for (var i = 0, l = cur.length; i < l; i++)
+            recurse(cur[i], prop + "[" + i + "]");
+          if (l == 0)
+            result[prop] = [];
+        } else {
+          var isEmpty = true;
+          for (var p in cur) {
+            isEmpty = false;
+            recurse(cur[p], prop ? prop + "." + p : p);
+          }
+          if (isEmpty && prop)
+            result[prop] = {};
+        }
+      }
+
+      recurse(data, "");
+      return result;
+    }
+
+    JSON.unflatten = function (data) {
+      "use strict";
+      if (Object(data) !== data || Array.isArray(data))
+        return data;
+      var regex = /\.?([^.\[\]]+)|\[(\d+)\]/g,
+        resultholder = {};
+      for (var p in data) {
+        var cur = resultholder,
+          prop = "",
+          m;
+        while (m = regex.exec(p)) {
+          cur = cur[prop] || (cur[prop] = (m[2] ? [] : {}));
+          prop = m[2] || m[1];
+        }
+        cur[prop] = data[p];
+      }
+      return resultholder[""] || resultholder;
+    };
+  </script>
+  <script>
     (function () {
       'use strict';
       Polymer({
@@ -72,11 +118,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         checkReady: function () {
           if (!!this._cDoc && !!this._rDoc && !!this._uDoc && !!this._dDoc) {
             this.fire('crud-ready');
+            return true;
           }
+          return false;
         },
 
         create: function (model) {
-          return this.$.client.fetch(this._cDoc.url, this.model);
+          return this.$.client.fetch(this._cDoc.url, model);
         },
 
         read: function (id) {
@@ -84,11 +132,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         update: function (model) {
-          return this.$.client.fetch(this._uDoc.url, this.model);
+          return this.$.client.fetch(this._uDoc.url, model, this._uDoc.method);
         },
 
         delete: function (model) {
-          return this.$.client.fetch(this._dDoc.url, this.model);
+          return this.$.client.fetch(this._dDoc.url, model);
         },
         getCStruct: function () {
           return this._cDoc.interface['flat-struct'];
@@ -120,6 +168,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           } else {
             console.error('crud for ' + this.modelName + ' is not handled check the api-settings.html file');
           }
+        },
+
+        getModelPrototype: function () {
+          var dots = {};
+          var flat = this._cDoc.interface['flat-struct'];
+          for (var i in flat) {
+            dots[i.replace(new RegExp('_', 'g'), '.')] = '';
+          }
+          console.log(dots);
+          console.log(JSON.unflatten(dots));
+          return JSON.parse(JSON.stringify(JSON.unflatten(dots)));
         },
 
         properties: {

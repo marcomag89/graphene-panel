@@ -36,7 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <a data-route$="{{item.name}}" href$="{{item.href}}" on-click="_onItemClick">
           <paper-ripple></paper-ripple>
           <iron-icon icon$="{{item.icon}}"></iron-icon>
-          <span>{{item.name}}</span>
+          <app-locale text="{{item.name}}"></app-locale>
         </a>
       </template>
     </paper-menu>

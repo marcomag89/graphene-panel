@@ -48,32 +48,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       bottom: 15px;
       right: 20px;
     }
+
+    .centerMsg {
+      font-size: 1.2em;
+      color: var(--default-highlight-text-color);
+      text-align: center;
+      margin-top: 20px;
+      font-weight: 200;
+    }
+
+    .tableContainer {
+      overflow-x: scroll;
+      padding-bottom: 50px;
+    }
   </style>
   <template>
     <graphene-collection role="collection-fetcher"></graphene-collection>
     <paper-fab on-click="_toCreate" class="creator" icon="add"></paper-fab>
-
-    <table>
-      <tr>
-        <template is="dom-repeat" items="{{columns}}">
-          <th class="item-cell">
-            <div class="tblHeader horizontal layout">
-              <div class="flex" on-click="_sortClick" name="{{item}}">{{item}}</div>
-              <iron-icon on-click="_sortClick" id="icon" name$="{{item}}" icon="{{_getIcon(item)}}"></iron-icon>
-            </div>
-          </th>
-        </template>
-      </tr>
-      <template is="dom-repeat" items="{{collectionItems}}" as="colItem">
-        <tr class="item-row">
-          <template is="dom-repeat" items="{{columns}}" as="colKey">
-            <td class="item-cell" on-click="_detailToMe" itemId$="{{_getId(colItem)}}">
-              <span>{{_getValue(colKey,colItem)}}</span><br/>
-            </td>
+    <div class="tableContainer">
+      <table>
+        <tr>
+          <template is="dom-repeat" items="{{columns}}">
+            <th class="item-cell">
+              <div class="tblHeader horizontal layout">
+                <div class="flex" on-click="_sortClick" name="{{item}}">
+                  <app-locale text="{{item}}"></app-locale>
+                </div>
+                <iron-icon on-click="_sortClick" id="icon" name$="{{item}}" icon="{{_getIcon(item)}}"></iron-icon>
+              </div>
+            </th>
           </template>
         </tr>
-      </template>
-    </table>
+        <template is="dom-if" if="{{!isEmpty}}">
+          <template is="dom-repeat" items="{{collectionItems}}" as="colItem">
+            <tr class="item-row">
+              <template is="dom-repeat" items="{{columns}}" as="colKey">
+                <td class="item-cell" on-click="_detailToMe" itemId$="{{_getId(colItem)}}">
+                  <span>{{_getValue(colKey,colItem)}}</span><br/>
+                </td>
+              </template>
+            </tr>
+          </template>
+        </template>
+      </table>
+    </div>
+    <template is="dom-if" if="{{isEmpty}}">
+      <div class="centerMsg">
+        <app-locale text="{{centerMsg}}"></app-locale>
+      </div>
+    </template>
     <collection-pagination role="pagination"></collection-pagination>
   </template>
   <script>

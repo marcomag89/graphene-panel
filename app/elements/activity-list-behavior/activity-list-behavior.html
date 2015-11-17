@@ -8,6 +8,9 @@
       this.fetcher.addEventListener('results', function (e) {
         this._onCollectionResults(e)
       }.bind(this));
+      this.fetcher.addEventListener('collection-status-change', function (e) {
+        this._onCollectionStatusChange(e)
+      }.bind(this));
       this.pagination.addEventListener('fetch-next', function (e) {
         this._onFetchNext()
       }.bind(this));
@@ -20,7 +23,15 @@
       this.onStart();
     },
 
+    _onCollectionStatusChange: function (e) {
+      this.collectionStatus = e.detail;
+      if (this.collectionStatus === 'empty') {
+        this.centerMsg = 'EMPTY_' + this._getModelName().toUpperCase() + '_COLLECTION';
+      }
+    },
     _onCollectionResults: function (e) {
+      console.log(e.detail.continuousResults);
+
       this._getColumns();
       if (this._isContinuous()) {
         this.collectionItems = e.detail.continuousResults;
@@ -44,8 +55,10 @@
     },
 
     onRefresh: function () {
-      this.unsetReady();
-      this.fetcher.refresh();
+      if (!!this.fetcher) {
+        this.unsetReady();
+        this.fetcher.refresh();
+      }
     },
 
     _sortClick: function (e) {
@@ -135,15 +148,37 @@
     _getCollectionFetcher: function () {
       return this.$$('[role = collection-fetcher]')
     },
+
     _getPagination: function () {
       return this.$$('[role = pagination]')
+    },
+
+    _isEmptyCollection: function () {
+      return this.collectionStatus === 'empty';
+    },
+
+    _isCompletedCollection: function () {
+      return this.collectionStatus === 'completed';
+    },
+
+    onParamsChange: function (pars) {
+      this.unsetReady();
+      console.log(this._getModelName());
+      this.columns = null;
+      this.fetcher = this._getCollectionFetcher();
+      this.pagination = this._getPagination();
+      this.fetcher.modelName = this._getModelName();
     },
 
     properties: {
       idCol: String,
       versionCol: String,
+      collectionStatus: String,
       collectionItems: {type: Array, notify: true},
       columns: {type: Array, notify: true},
+      isEmpty: {type: Boolean, computed: '_isEmptyCollection(collectionStatus)'},
+      isCompletedCollection: {type: Boolean, computed: '_isCompletedCollection(collectionStatus)'},
+      centerMsg: String,
       pagination: Object
     }
 
