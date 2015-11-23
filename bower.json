@@ -19,7 +19,8 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.1.0",
-    "graphene-elements": "GrapheneElements/graphene-elements"
+    "graphene-elements": "GrapheneElements/graphene-elements",
+    "marked-element": "PolymerElements/marked-element#~1.1.1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

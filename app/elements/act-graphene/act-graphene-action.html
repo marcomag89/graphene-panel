@@ -12,8 +12,89 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../activity-behavior/activity-behavior.html">
 <dom-module id="act-graphene-action">
   <template>
-    <style></style>
-    <graphene-doc id="doc" on-doc-update="_docUpdate"></graphene-doc>
+    <style>
+      .monospace {
+        font-family: 'Roboto Mono', 'Consolas', 'Menlo', monospace;
+        font-size: 1em;
+      }
+
+      .quote {
+        display: block;
+        background-color: #F5F3F3;
+        border: 1px solid #BDBDBD;
+        padding: 10px;
+        border-radius: 3px;
+        margin-top: 20px;
+        overflow-x: scroll;
+      }
+
+      .hli.square {
+        display: inline-block;
+        padding: 4px 15px 4px 15px;
+        color: white;
+      }
+
+      [m=POST] {
+        background-color: cadetblue;
+      }
+
+      [m=GET] {
+        background-color: green;
+      }
+
+      [m=PUT] {
+        background-color: darkslateblue;
+      }
+
+      [m=DELETE] {
+        background-color: indianred;
+      }
+
+      .markdown-html code {
+        font-family: 'Roboto Mono', 'Consolas', 'Menlo', monospace;
+        font-size: 0.9em;
+      }
+
+      .hli {
+        color: #DA0000;
+        font-weight: bold;
+      }
+
+    </style>
+    <graphene-doc id="doc" on-doc-update="_docUpdate" detail></graphene-doc>
+    <marked-element markdown="{{doc.description}}">
+      <div class="markdown-html"></div>
+    </marked-element>
+
+    <h3>HTTP interface</h3>
+
+    <div class="quote monospace">
+      <span class="hli square" m$="{{doc.method}}">{{doc.method}}</span>&nbsp;&nbsp;<span>{{doc.url}}</span>
+    </div>
+    <div class="quote">
+      <marked-element markdown="{{doc.requestDataMd}}">
+        <div class="markdown-html"></div>
+      </marked-element>
+    </div>
+
+    <h3>Response</h3>
+
+    <div class="quote">
+      <marked-element markdown="{{doc.responseDataMd}}">
+        <div class="markdown-html"></div>
+      </marked-element>
+    </div>
+
+    <table>
+      <tr>
+        <th>Action Name</th>
+        <td>{{doc.name}}</td>
+      </tr>
+      <tr>
+        <th>Module</th>
+        <td><a href="/graphene/modules/{{doc.module}}">{{doc.module}}</a></td>
+      </tr>
+    </table>
   </template>
   <script>
     (function () {
@@ -27,7 +108,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         _docUpdate: function (e) {
-          console.log(e);
+          var doc = e.detail[0];
+          console.log(doc);
+          if (!!doc['request-data']) {
+            doc.requestDataJson = JSON.stringify(doc['request-data'], null, 4);
+            doc.requestDataJson = doc.requestDataJson.replace(/([a-z0-9])--[tc]_/g, '$1, ');
+            doc.requestDataJson = doc.requestDataJson.replace(/--[tc]_/g, '');
+            doc.requestDataJson = doc.requestDataJson.replace(/_/g, ' ');
+            doc.requestDataJson = doc.requestDataJson.replace(/::/g, ':');
+            doc.requestDataMd = '```JSON\n' + doc.requestDataJson + '\n```';
+          }
+          if (!!doc['response-data']) {
+            //Response rendering
+            doc.responseDataJson = JSON.stringify(doc['response-data'], null, 4);
+            doc.responseDataJson = doc.responseDataJson.replace(/([a-z0-9])--[tc]_/g, '$1, ');
+            doc.responseDataJson = doc.responseDataJson.replace(/--[tc]_/g, '');
+            doc.responseDataJson = doc.responseDataJson.replace(/_/g, ' ');
+            doc.responseDataJson = doc.responseDataJson.replace(/::/g, ':');
+            doc.responseDataMd = '```JSON\n' + doc.responseDataJson + '\n```';
+          }
+          this.doc = doc;
+          console.log(this.doc);
           this.setReady();
         },
 
