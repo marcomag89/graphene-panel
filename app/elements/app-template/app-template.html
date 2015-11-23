@@ -24,11 +24,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     .searchBar {
-      background-color: var(--secondary-text-color);
+      background-color: rgba(0, 0, 0, 0.11);
     }
 
     .searchBar input {
-      color: var(--text-primary-color);
+      color: white;
+    }
+
+    .searchBar paper-icon-button {
+      padding: 8px;
+      margin-top: auto;
+      margin-bottom: auto;
+      margin-right: 5px;
     }
 
     paper-material {
@@ -43,10 +50,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       color: var(--menu-link-color);
     }
 
-    .paper-font-subhead {
-      margin-top: auto;
-      margin-bottom: auto;
-    }
+
 
     @media (max-width: 600px) {
       paper-material {
@@ -105,13 +109,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </template>
 
           <!-- Application name -->
-          <div class="middle middle-container center horizontal layout">
-            <div class="app-name">
-              <app-locale text="APP_NAME"></app-locale>
-              <b>&nbsp;•&nbsp;</b>
-              <app-locale text="{{settings.name}}" pars="{{settings.titlePars}}"></app-locale>
+          <template is="dom-if" if="{{!searchVisible}}">
+            <div class="middle middle-container center horizontal layout">
+              <div class="app-name">
+                <app-locale text="APP_NAME"></app-locale>
+                <b>&nbsp;•&nbsp;</b>
+                <app-locale text="{{settings.name}}" pars="{{settings.titlePars}}"></app-locale>
+              </div>
             </div>
-          </div>
+          </template>
           <!--
           <!-- Application sub title --
           <div class="bottom bottom-container center horizontal layout">
@@ -139,6 +145,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$$('#content').notifyResize();
           this.$$('#drawer').notifyResize();
         },
+
         scrollPageToTop: function () {
           try {
             document.getElementById('mainContainer').scrollTop = 0;
@@ -156,12 +163,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         _onActivityChange: function (e) {
-          console.log(e.detail);
+          this._clearSearch();
+          this.$.paperDrawerPanel.closeDrawer();
           if (!!e.detail.newActivity) {
             this.settings = e.detail.newActivity.getTemplateSettings();
             this.$.paperDrawerPanel.forceNarrow = !this.settings.drawer
           }
-          console.log(this.settings);
+          this.$$('#content').notifyResize();
+          this.$$('#drawer').notifyResize();
         },
 
         _clearSearch: function () {
