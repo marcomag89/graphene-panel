@@ -198,6 +198,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.aclEnabled = e.detail.aclEnabled;
         },
 
+        settings: {
+          refresh: true,
+          drawer: false
+        },
+
         properties: {
           loaded: {type: Boolean, notify: true, computed: '_isLoaded(status,mods)'},
           aclEnabled: {type: Boolean, notify: true, value: true},

@@ -96,8 +96,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <!-- Toolbar icons -->
 
           <template is="dom-if" if="{{!searchVisible}}">
-            <paper-icon-button icon="search" on-click="_toggleSearch"></paper-icon-button>
-            <paper-icon-button icon="refresh" on-click="_sendRefresh"></paper-icon-button>
+            <template is="dom-if" if="{{settings.search}}">
+              <paper-icon-button icon="search" on-click="_toggleSearch"></paper-icon-button>
+            </template>
+            <template is="dom-if" if="{{settings.refresh}}">
+              <paper-icon-button icon="refresh" on-click="_sendRefresh"></paper-icon-button>
+            </template>
           </template>
 
           <!-- Application name -->
@@ -105,7 +109,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <div class="app-name">
               <app-locale text="APP_NAME"></app-locale>
               <b>&nbsp;•&nbsp;</b>
-              <app-locale text="HOME"></app-locale>
+              <app-locale text="{{settings.name}}" pars="{{settings.titlePars}}"></app-locale>
             </div>
           </div>
           <!--
@@ -118,7 +122,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <!-- Main Content -->
         <div class="content">
-          <app-router id="router" on-activities-load="_onActivitiesLoad"></app-router>
+          <app-router id="router" on-activities-load="_onActivitiesLoad"
+                      on-activity-change="_onActivityChange"></app-router>
         </div>
       </paper-scroll-header-panel>
     </paper-drawer-panel>
@@ -148,6 +153,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.scrollPageToTop();
             this.$$('#searchBox').focus();
           }
+        },
+
+        _onActivityChange: function (e) {
+          console.log(e.detail);
+          if (!!e.detail.newActivity) {
+            this.settings = e.detail.newActivity.getTemplateSettings();
+            this.$.paperDrawerPanel.forceNarrow = !this.settings.drawer
+          }
+          console.log(this.settings);
         },
 
         _clearSearch: function () {
@@ -197,7 +211,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         properties: {
           searchVisible: {type: Boolean, value: false},
-          searchValue: {type: String, observer: '_onSearchValueChange', notify: true}
+          searchValue: {type: String, observer: '_onSearchValueChange', notify: true},
+          settings: Object
         }
       });
     })();

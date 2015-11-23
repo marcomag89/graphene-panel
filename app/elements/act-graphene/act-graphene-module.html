@@ -60,16 +60,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.module = res.InstalledModules[i];
               }
             }
-            console.log(this.module);
             this.setReady();
           }.bind(this));
         },
-
-        onStop: function () {
-          this.mods = null;
-          this.status = null;
-        },
-
 
         properties: {
           module: Object

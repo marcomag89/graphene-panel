@@ -46,9 +46,25 @@ Definisce l'interfaccia ed un comportamento di un activity vuota
     setReady: function () {
       this.activityManager.onActivityReady();
     },
+
     unsetReady: function () {
       this.activityManager.activityReady = false;
     },
+
+    getTemplateSettings: function () {
+      var base = {
+        search: false,
+        refresh: false,
+        name: this.getIdentifier().replace(/[-]/g, '_').toUpperCase(),
+        drawer: true,
+        titlePars: []
+      };
+      Object.assign(base, this.settings);
+      return base
+    },
+
+
+    settings: {},
 
     properties: {
       isActivity: {type: Boolean, value: true},
