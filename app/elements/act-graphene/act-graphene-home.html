@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../activity-behavior/activity-behavior.html">
-<dom-module id="act-home">
+<dom-module id="act-graphene-home">
   <template>
     <style>
       :host {
@@ -80,12 +80,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         </div>
       </template>
-      <h2>Server status</h2>
+
+      <h2>Application</h2>
       <table>
         <tr>
-          <td class="key">App name</td>
+          <td class="key">Name</td>
           <td>{{status.app-name}}</td>
         </tr>
+      </table>
+
+      <h2>Server</h2>
+      <table>
         <tr>
           <td class="key">Graphene version</td>
           <td>{{status.framework-version}}</td>
@@ -106,57 +111,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <td class="key">PHP version</td>
           <td>{{status.php-version}}</td>
         </tr>
+      </table>
+
+      <h2>Storage</h2>
+      <table>
         <tr>
-          <td class="key">DB status</td>
-          <td>{{status.db.connectionStatus}}</td>
+          <td class="key">Driver</td>
+          <td>{{status.db.driver}}</td>
         </tr>
         <tr>
-          <td class="key">DB driver</td>
-          <td>{{status.db.driver}}</td>
+          <td class="key">Status</td>
+          <td>{{status.db.connectionStatus}}</td>
         </tr>
       </table>
 
       <h2>Installed Modules</h2>
-      <template is="dom-repeat" items="{{mods}}">
-        <h3>{{item.name}}</h3>
-
-        <div>
-          <table>
-            <tr>
-              <th colspan="2">Info</th>
-            </tr>
-            <tr>
-              <td class="key">Author</td>
-              <td>{{item.author}}</td>
-            </tr>
-            <tr>
-              <td class="key">Version</td>
-              <td>{{item.version}}</td>
-            </tr>
-            <tr>
-              <td class="key">Namespace</td>
-              <td>{{item.namespace}}</td>
-            </tr>
-          </table>
-          <table>
-            <tr>
-              <th colspan="3">Actions</th>
-            </tr>
-            <tr>
-              <th>Name</th>
-              <th>Url</th>
-              <th>Method</th>
-            </tr>
-            <template is="dom-repeat" items="{{item.actions}}">
-              <tr>
-                <td class="key">{{item.name}}</td>
-                <td>{{item.url}}</td>
-                <td>{{item.method}}</td>
-              </tr>
-            </template>
-          </table>
-        </div>
-      </template>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Author</th>
+          <th>Version</th>
+        </tr>
+        <template is="dom-repeat" items="{{mods}}">
+          <tr>
+            <td><a href="/graphene/modules/{{item.name}}">
+              <span>{{item.name}}</span>&nbsp;(<span>{{item.namespace}}</span>)
+            </a></td>
+            <td>{{item.author}}</td>
+            <td>{{item.version}}</td>
+          </tr>
+        </template>
+      </table>
+      <h3>{{item.name}}</h3>
     </template>
 
   </template>
@@ -164,7 +150,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     (function () {
       'use strict';
       Polymer({
-        is: 'act-home',
+        is: 'act-graphene-home',
 
         behaviors: [activityBehavior],
 
@@ -197,11 +183,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             var body = {Config: {admin: {username: confUser.value, password: confPass.value}}};
             this.$.client.gFetch('/system/config', body)
               .then(function (res) {
-              console.log(res);
-            })
+                console.log(res);
+              })
               .catch(function (err) {
-              console.error(err);
-            });
+                console.error(err);
+              });
           } else {
             console.log('invalid');
           }

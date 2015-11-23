@@ -4,7 +4,18 @@
    */
 
   var routing = [
-    {path: '/', activity: 'act-home'},
+    {activity: 'act-graphene-home', file: 'elements/act-graphene/act-graphene-home.html', path: '/graphene/home'},
+    {
+      activity: 'act-graphene-module',
+      file: 'elements/act-graphene/act-graphene-module.html',
+      path: '/graphene/modules/:module'
+    },
+    {
+      activity: 'act-graphene-action',
+      file: 'elements/act-graphene/act-graphene-action.html',
+      path: '/graphene/modules/:module/:action'
+    },
+
     {path: '/:model/list', activity: 'act-list'}, // [users/list]
     {path: '/:model/:mode/:id', activity: 'act-crud'}, // [users/create/0, users/read/ID /users/update/ID]
 

@@ -51,16 +51,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       Polymer({
         is: 'app-router',
-
-        attached: function () {
-          this.appEnabled = app.status._display === 'allow';
-          /// /this.appEnabled = e.detail.newStatus === 'allow';
+        created: function () {
           document.addEventListener('app-status-change', function (e) {
             this._onAppStatusChange(e);
           }.bind(this), false);
           this._loadRoutingSettings(function (settings) {
-            this._onSettingsLoad(settings)
+            this._onSettingsLoad(settings);
           }.bind(this));
+        },
+
+        attached: function () {
+          this.appEnabled = app.status._display === 'allow';
         },
 
         _loadRoutingSettings: function (callback) {
@@ -83,37 +84,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         _loadActivities: function (callback) {
-          if (!(!!this.activities))this.activities = [];
+          if (!(!!this.activities)) {
+            this.activities = [];
+          }
           for (var i in this.settings) {
             var route = this.settings[i];
             var actUrl = 'elements/' + route.activity + '/' + route.activity + '.html';
-
+            if (!!route.file) {
+              actUrl = route.file;
+            }
             this.importHref([actUrl],
-
               //Activity caricata con successo
-              function (route) {
-                var loadedElem = document.createElement(route.activity);
-                if (!!loadedElem.isActivity && loadedElem.isActivity) {
-                  console.log('loaded activity: ' + route.activity);
-                } else {
-                  route.activity = 'act-not-found';
-                }
-                this.activities.push(route);
-                if (this.activities.length === this.settings.length) {
-                  callback();
-                }
-              }.bind(this, route),
-
+              this._onImportSuccess.bind(this, route, callback),
               //Activity non trovata
-              function (route) {
-                route.activity = 'act-not-found';
-                this.activities.push(route);
-                if (this.activities.length === this.settings.length) {
-                  callback();
-                }
-              }.bind(this, route)
+              this._onImportFails.bind(this, route, callback)
             );//END importHref
+          }
+        },
 
+        _onImportSuccess: function (route, callback) {
+          var loadedElem = document.createElement(route.activity);
+          if (!!loadedElem.isActivity && loadedElem.isActivity) {
+            console.log('loaded activity: ' + route.activity);
+          } else {
+            route.activity = 'act-not-found';
+          }
+          this.activities.push(route);
+          if (this.activities.length === this.settings.length) {
+            callback();
+          }
+        },
+
+        _onImportFails: function (route, callback) {
+          route.activity = 'act-not-found';
+          this.activities.push(route);
+          if (this.activities.length === this.settings.length) {
+            callback();
           }
         },
 
@@ -168,13 +174,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               activity.stop();
               this.fire('activity-stop', activity);
             } catch (e) {
-              console.error('cannot stop activity')
+              console.error('cannot stop activity');
             }
             try {
               this.$$('#activitiesContainer').removeChild(activity);
               this.fire('activity-drop', activity);
             } catch (e) {
-              console.error('cannot drop activity')
+              console.error('cannot drop activity');
             }
           }
         },
