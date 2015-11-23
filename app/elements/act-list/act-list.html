@@ -71,7 +71,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <template is="dom-repeat" items="{{columns}}">
             <th class="item-cell">
               <div class="tblHeader horizontal layout">
-                <div class="flex" on-click="_sortClick" name="{{item}}">
+                <div class="flex item-column" on-click="_sortClick" name="{{item}}">
                   <app-locale text="{{item}}"></app-locale>
                 </div>
                 <iron-icon on-click="_sortClick" id="icon" name$="{{item}}" icon="{{_getIcon(item)}}"></iron-icon>

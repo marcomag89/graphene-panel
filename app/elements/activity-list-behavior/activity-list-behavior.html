@@ -31,7 +31,6 @@
       }
     },
     _onCollectionResults: function (e) {
-      console.log(e);
       this._getColumns();
       if (this._isContinuous()) {
         this.collectionItems = e.detail.continuousResults;
@@ -62,15 +61,17 @@
     },
 
     _sortClick: function (e) {
-      var fieldName = this.getFieldName(e.target.name);
+      console.log('%O', e.currentTarget);
+      var fieldName = this.getFieldName(e.currentTarget.name);
       if (this.fetcher.sortBy === fieldName) {
         this.fetcher.discend = !this.fetcher.discend;
       }
       this.fetcher.sortBy = fieldName;
-      this.$$('#icon[name=' + e.target.name + ']').icon = this._getIcon(e.target.name);
+      this.$$('#icon[name=' + e.currentTarget.name + ']').icon = this._getIcon(e.currentTarget.name);
     },
 
     getFieldName: function (name) {
+      console.log(name);
       var nameTok = name.split('_');
       nameTok.splice(0, 1);
       return nameTok.join('_').toUpperCase();
@@ -173,7 +174,10 @@
         this.fetcher.modelName = this._getModelName();
       }
     },
-
+    settings: {
+      search: true,
+      refresh: true
+    },
     properties: {
       idCol: String,
       versionCol: String,
