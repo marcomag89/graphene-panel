@@ -23,20 +23,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var userLang = navigator.language || navigator.userLanguage;
           var url = '../../locale/' + userLang + '.html';
           this.importHref([url], function () {
-            console.log('loaded!');
             this.lang = lang;
-          }.bind(this))
+          }.bind(this));
         },
         attached: function () {
         },
 
         _translate: function (text, lang, pars) {
-          if (!(!!pars)) pars = [];
+          pars = !(!!pars) ? pars : [];
           if (!!text && !!lang) {
             if (!!lang[text.toUpperCase()]) {
               var res = lang[text.toUpperCase()];
               for (var i = 1; i < pars.length; i++) {
-                var regEx = new RegExp("\\{" + (i - 1) + "\\}", "gm");
+                var regEx = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
                 res = theString.replace(regEx, arguments[i]);
               }
               return res;

@@ -63,7 +63,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             var user = JSON.parse(JSON.stringify(e.detail.user));
             var anonimousKeyword = 'ANONIMOUS';
             if (!!user) {
-              if (!(!!user.name))user.name = this.wordReference.words[anonimousKeyword];
+              if (!(!!user.name)) {
+                user.name = this.wordReference.words[anonimousKeyword];
+              }
               if (!!user.groups) {
                 this._setGroupStiring(user.groups);
               }

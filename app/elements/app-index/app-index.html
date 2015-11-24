@@ -69,14 +69,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         messageToast: function (message, duration) {
-          if (!(!!duration)) duration = '4000';
+          if (!(!!duration)) {
+            duration = '4000';
+          }
           this.$.messageToast.duration = duration;
           this.$.messageToast.text = message;
           this.$.messageToast.show();
         },
 
         errorToast: function (message, duration) {
-          if (!(!!duration)) duration = '4000';
+          if (!(!!duration)) {
+            duration = '4000';
+          }
           this.$.errorToast.duration = duration;
           this.$.errorToast.text = message;
           this.$.errorToast.show();

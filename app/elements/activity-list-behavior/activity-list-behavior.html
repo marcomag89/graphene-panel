@@ -7,16 +7,16 @@
         this.fetcher = this._getCollectionFetcher();
         this.pagination = this._getPagination();
         this.fetcher.addEventListener('results', function (e) {
-          this._onCollectionResults(e)
+          this._onCollectionResults(e);
         }.bind(this));
         this.fetcher.addEventListener('collection-status-change', function (e) {
-          this._onCollectionStatusChange(e)
+          this._onCollectionStatusChange(e);
         }.bind(this));
         this.pagination.addEventListener('fetch-next', function (e) {
-          this._onFetchNext()
+          this._onFetchNext();
         }.bind(this));
         this.pagination.addEventListener('fetch-prev', function (e) {
-          this._onFetchPrev()
+          this._onFetchPrev();
         }.bind(this));
         this.fetcher.modelName = this._getModelName();
       }
@@ -98,9 +98,15 @@
 
     _getIcon: function (itemName) {
       var name = this.getFieldName(itemName);
-      if (name === this.fetcher.sortBy && this.fetcher.discend) return 'expand-less';
-      else if (name === this.fetcher.sortBy && !this.fetcher.discend) return 'expand-more';
-      else if (!(name === this.fetcher.sortBy)) return 'b';
+      if (name === this.fetcher.sortBy && this.fetcher.discend) {
+        return 'expand-less';
+      }
+      else if (name === this.fetcher.sortBy && !this.fetcher.discend) {
+        return 'expand-more';
+      }
+      else if (name !== this.fetcher.sortBy) {
+        return 'b';
+      }
     },
 
     _detailToMe: function (e) {
@@ -141,17 +147,17 @@
 
 
     _isContinuous: function () {
-      return true
+      return true;
     },
     _getModelName: function () {
-      return this.params.model
+      return this.params.model;
     },
     _getCollectionFetcher: function () {
-      return this.$$('[role = collection-fetcher]')
+      return this.$$('[role = collection-fetcher]');
     },
 
     _getPagination: function () {
-      return this.$$('[role = pagination]')
+      return this.$$('[role = pagination]');
     },
 
     _isEmptyCollection: function () {

@@ -2,14 +2,24 @@
 -->
 <script>
   var actCrudBhImpl = {
-    start: function () {
-      this.mode = this._getCurrentMode().toLowerCase();
+    onInit: function () {
+      this._addButtonsBar();
       this._bindComponents();
       this._addComponentsListeners();
       this._updateComponentsAttr();
       this._setComponentStyles();
-      this.crudClient.modelName = this._getModelName();
-      this.crudClient.checkReady();
+    },
+
+    start: function () {
+      try {
+        console.log(this._getModelName());
+        this.crudClient.modelName = this._getModelName();
+
+        this.mode = this._getCurrentMode().toLowerCase();
+        this.crudClient.checkReady();
+      } catch (e) {
+        console.error(e);
+      }
     },
 
     _bindComponents: function () {
@@ -19,54 +29,89 @@
       this.btnDelete = this._getDeleteButton();
       this.btnSave = this._getSaveButton();
       this.btnCreate = this._getCreateButton();
-      this.btnBar = this._getButtonBar();
+      this.btnBar = this._getButtonsBar();
     },
 
     _addComponentsListeners: function () {
       this.btnEdit.addEventListener('click', function (e) {
-        this._toEdit()
-      }.bind(this));
-      this.btnBack.addEventListener('click', function (e) {
-        this._toRead()
-      }.bind(this));
-      this.btnDelete.addEventListener('click', function (e) {
-        this._onClientReady(e)
-      }.bind(this));
-      this.btnSave.addEventListener('click', function (e) {
-        this._onClientReady(e)
+        this._toEdit();
       }.bind(this));
       this.btnCreate.addEventListener('click', function (e) {
-        this._onClientReady(e)
+        this.c();
+      }.bind(this));
+      this.btnBack.addEventListener('click', function (e) {
+        this._toRead();
+      }.bind(this));
+      this.btnSave.addEventListener('click', function (e) {
+        this.u();
+      }.bind(this));
+      this.btnDelete.addEventListener('click', function (e) {
+        this.d(e);
       }.bind(this));
 
       this.crudClient.addEventListener('crud-ready', function (e) {
-        this._onClientReady(e)
+        this._onClientReady(e);
       }.bind(this));
     },
 
+
+    _addButtonsBar: function () {
+      if (!(!!this._getButtonsBar())) {
+        var bar = document.createElement('div');
+        bar.setAttribute('class', 'buttons-bar');
+        bar.appendChild(this._createButton('back'));
+        bar.appendChild(this._createButton('edit'));
+        bar.appendChild(this._createButton('create'));
+        bar.appendChild(this._createButton('save'));
+        bar.appendChild(this._createButton('delete'));
+        Polymer.dom(this.root).appendChild(bar);
+        console.log(bar);
+      }
+    },
+
+    _createButton: function (name) {
+      var btn = document.createElement('paper-button');
+      var locale = document.createElement('app-locale');
+      var icon = document.createElement('iron-icon');
+      icon.setAttribute('icon', this._getButtonIcon(name));
+      btn.setAttribute('role', name);
+      locale.setAttribute('text', name);
+      btn.appendChild(icon);
+      btn.appendChild(locale);
+      return btn;
+    },
+    _getButtonIcon: function (name) {
+      return this.buttonIcons[name + 'Ic'];
+    },
+
     _setComponentStyles: function () {
-      this.btnBar.style.position = 'absolute';
-      this.btnBar.style.bottom = '10px';
-      this.btnBar.style.right = '20px';
+      this.btnBar.style.width = '100%';
+      this.btnBar.style['text-align'] = 'right';
+      this.btnBar.style['padding-top'] = '20px';
+      this.btnBar.style['padding-bottom'] = '20px';
     },
 
     _updateComponentsAttr: function () {
       if (!!this.btnEdit) {
-        this.btnEdit.hidden = this._isEdit();
+        this.btnEdit.hidden = this._isEdit() || this._isCreate();
         this.btnEdit.raised = true;
       }
-      if (!!this.btnBack)this.btnBack.hidden = this._isRead();
-      if (!!this.btnDelete) {
-        this.btnDelete.hidden = this._isRead();
-        this.btnDelete.raised = true;
-
+      if (!!this.btnBack) {
+        this.btnBack.hidden = this._isRead();
       }
+      if (!!this.btnDelete) {
+        this.btnDelete.hidden = this._isRead() || this._isCreate();
+        this.btnDelete.raised = true;
+      }
+
       if (!!this.btnSave) {
         this.btnSave.hidden = !this._isEdit();
         this.btnSave.raised = true;
       }
-      if (!!this.btnCreate)this.btnCreate.hidden = !this._isCreate();
-
+      if (!!this.btnCreate) {
+        this.btnCreate.hidden = !this._isCreate();
+        this.btnCreate.raised = true;
+      }
 
     },
 
@@ -75,20 +120,23 @@
         this.r();
       }
       if (this.mode === 'create') {
+        this.model = this.getPrototype();
         this.onStart();
       }
     },
 
 
     c: function () {
-      this.unsetReady();
-      this.crudClient.create(this.model)
-        .then(function (res) {
-          this._onModelCreateSuccess(res);
-        }.bind(this))
-        .catch(function (err) {
-          console.error(err)
-        }.bind(this));
+      if (this.validate('c')) {
+        this.unsetReady();
+        this.crudClient.create(this.model)
+          .then(function (res) {
+            this._onModelCreateSuccess(res);
+          }.bind(this))
+          .catch(function (err) {
+            console.error(err);
+          }.bind(this));
+      }
     },
 
     r: function () {
@@ -100,16 +148,36 @@
           this.onStart();
         }.bind(this))
         .catch(function (err) {
-          console.error(err)
+          console.error(err);
         }.bind(this));
     },
 
     u: function () {
-
+      if (this.validate('u')) {
+        this.unsetReady();
+        this.crudClient.update(this.model)
+          .then(function (res) {
+            this.model = res;
+            this._updateFields();
+            this._toRead();
+          }.bind(this))
+          .catch(function (err) {
+            console.error(err);
+          }.bind(this));
+      }
     },
 
     d: function () {
-
+      this.unsetReady();
+      this.crudClient.delete(this.model)
+        .then(function (res) {
+          this.model = res;
+          this._updateFields();
+          page('/' + this._getModelName() + '/list/');
+        }.bind(this))
+        .catch(function (err) {
+          console.error(err);
+        }.bind(this));
     },
 
     onStart: function () {
@@ -125,13 +193,13 @@
       return this.$$('[role=crud-client]');
     },
     _getModelName: function () {
-      return this.params.model
+      return this.params.model;
     },
     _getCurrentMode: function () {
-      return this.params.mode
+      return this.params.mode;
     },
     _getCurrentId: function () {
-      return this.params.id
+      return this.params.id;
     },
 
     _getEditButton: function () {
@@ -149,7 +217,7 @@
     _getCreateButton: function () {
       return this.$$('[role=create]');
     },
-    _getButtonBar: function () {
+    _getButtonsBar: function () {
       return this.$$('.buttons-bar');
     },
     _updateFields: function () {
@@ -157,7 +225,6 @@
     },
 
     _readFields: function () {
-
     },
 
     _toEdit: function () {
@@ -165,8 +232,14 @@
     },
 
     _toRead: function () {
-      page('/' + this._getModelName() + '/read/' + this._getCurrentId());
+      if (this._getCurrentMode() === 'create') {
+        page('/' + this._getModelName() + '/list/');
+      } else {
+        page('/' + this._getModelName() + '/read/' + this._getCurrentId());
+
+      }
     },
+
 
     _onModeChange: function () {
       this._updateComponentsAttr();
@@ -181,14 +254,36 @@
       return this.mode === 'create';
     },
 
-    onParamsChange: function (pars) {
-      var mode = this._getCurrentMode().toLowerCase();
-      if (mode === 'read' && this.mode !== 'read') {
-        this.start();
+    //mode: c:create, u:update
+    validate: function (mode) {
+      var inputs = this.querySelectorAll('paper-input');
+      var valid = true;
+      for (var i = 0; i < inputs.length; i++) {
+        var inputValid = inputs[i].validate();
+        if (!inputValid && valid) {
+          valid = false;
+        }
       }
-      else {
-        this.mode = this._getCurrentMode().toLowerCase();
+      console.log(valid);
+      return valid;
+
+    },
+
+    getPrototype: function () {
+      try {
+        return this._getCrudClient().getModelPrototype();
+      } catch (e) {
+        console.error(e);
+        return {};
       }
+    },
+
+    buttonIcons: {
+      backIc: 'arrow-back',
+      editIc: 'create',
+      createIc: 'add',
+      saveIc: 'save',
+      deleteIc: 'delete',
     },
 
     properties: {
@@ -202,5 +297,5 @@
     }
 
   };
-  var activityCrudBehavior = [activityBehavior, actCrudBhImpl]
+  var activityCrudBehavior = [activityBehavior, actCrudBhImpl];
 </script>
