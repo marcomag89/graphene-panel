@@ -17,6 +17,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
     (function () {
       'use strict';
+
       Polymer({
         is: 'app-locale',
         created: function () {
@@ -26,11 +27,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.lang = lang;
           }.bind(this));
         },
+
         attached: function () {
         },
 
         _translate: function (text, lang, pars) {
-          pars = !(!!pars) ? pars : [];
+          pars = !!pars ? pars : [];
           if (!!text && !!lang) {
             if (!!lang[text.toUpperCase()]) {
               var res = lang[text.toUpperCase()];
@@ -55,6 +57,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           text: {type: String, value: '', notify: true},
           result: {type: String, computed: '_translate(text,lang)', notify: true}
         }
+
       });
     })();
   </script>
