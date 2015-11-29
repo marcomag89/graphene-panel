@@ -222,6 +222,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         onActivityReady: function () {
           this.activityReady = true;
+          this.fire('activity-ready', this.currentActivity);
         },
 
         _onAppStatusChange: function (e) {

@@ -75,11 +75,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </paper-scroll-header-panel>
 
       <!-- Main Area -->
-      <paper-scroll-header-panel on-content-scroll="_onContentScroll"
-                                 on-paper-header-transform="_onHeaderTransform"
-                                 main
-                                 fixed
-                                 id="content"
+      <paper-scroll-header-panel
+        main fixed
+        on-content-scroll="_onContentScroll"
+        id="content"
         >
 
         <!-- Main Toolbar -->
@@ -126,8 +125,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <!-- Main Content -->
         <div class="content">
-          <app-router id="router" on-activities-load="_onActivitiesLoad"
-                      on-activity-change="_onActivityChange"></app-router>
+          <app-router
+            id="router"
+            on-activities-load="_onActivitiesLoad"
+            on-activity-change="_onActivityChange"
+            on-activity-ready="_onActivityReady"
+            ></app-router>
         </div>
       </paper-scroll-header-panel>
     </paper-drawer-panel>
@@ -139,11 +142,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       Polymer({
         is: 'app-template',
 
+        /**
+         * Lanciato al caricamento delle activity
+         */
         _onActivitiesLoad: function () {
+          this.tappost();
+        },
+
+        /**
+         * Lanciato al cambio activity
+         */
+        _onActivityChange: function (e) {
+          this._clearSearch();
+          this.$.paperDrawerPanel.closeDrawer();
+          if (!!e.detail.newActivity) {
+            this.settings = e.detail.newActivity.getTemplateSettings();
+            this.$.paperDrawerPanel.forceNarrow = !this.settings.drawer;
+          }
+          this.tappost();
+        },
+
+        /**
+         * Lanciato quando l'activity corrente
+         * si è dichiearata "ready"
+         */
+        _onActivityReady: function (e) {
+          this.tappost();
+        },
+
+        /**
+         * Scongiura il problema degli elementi del menu e del contenuto
+         * spostati troppo in alto
+         */
+        tappost: function () {
           this.$$('#content').notifyResize();
           this.$$('#drawer').notifyResize();
         },
 
+        /**
+         * Esegue lo scrolling in alto della pagina corrente
+         */
         scrollPageToTop: function () {
           try {
             document.getElementById('mainContainer').scrollTop = 0;
@@ -158,17 +196,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.scrollPageToTop();
             this.$$('#searchBox').focus();
           }
-        },
-
-        _onActivityChange: function (e) {
-          this._clearSearch();
-          this.$.paperDrawerPanel.closeDrawer();
-          if (!!e.detail.newActivity) {
-            this.settings = e.detail.newActivity.getTemplateSettings();
-            this.$.paperDrawerPanel.forceNarrow = !this.settings.drawer;
-          }
-          this.$$('#content').notifyResize();
-          this.$$('#drawer').notifyResize();
         },
 
         _clearSearch: function () {
@@ -192,24 +219,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$.router.onRefresh();
         },
 
-        _onHeaderTransform: function (e) {
-          /*
-          var appName = document.querySelector('#mainToolbar .app-name');
-          var middleContainer = document.querySelector('#mainToolbar .middle-container');
-          var bottomContainer = document.querySelector('#mainToolbar .bottom-container');
-          var detail = e.detail;
-          var heightDiff = detail.height - detail.condensedHeight;
-          var yRatio = Math.min(1, detail.y / heightDiff);
-          var maxMiddleScale = 0.50;  // appName max size when condensed. The smaller the number the smaller the condensed size.
-          var scaleMiddle = Math.max(maxMiddleScale, (heightDiff - detail.y) / (heightDiff / (1 - maxMiddleScale)) + maxMiddleScale);
-          var scaleBottom = 1 - yRatio;
-          Polymer.Base.transform('translate3d(0,' + yRatio * 100 + '%,0)', middleContainer);
-          Polymer.Base.transform('scale(' + scaleBottom + ') translateZ(0)', bottomContainer);
-          Polymer.Base.transform('scale(' + scaleMiddle + ') translateZ(0)', appName);
-          if (detail.y > 20) {
-            this.searchVisible = false;
-           }*/
-        },
 
         _onContentScroll: function (e) {
           var event = new CustomEvent('indexContentScroll', {detail: e.detail, bubbles: true, cancelable: true});

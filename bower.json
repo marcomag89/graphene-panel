@@ -20,7 +20,10 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^1.1.0",
     "graphene-elements": "GrapheneElements/graphene-elements",
-    "marked-element": "PolymerElements/marked-element#~1.1.1"
+    "marked-element": "PolymerElements/marked-element#~1.1.1",
+    "iron-pages": "PolymerElements/iron-pages#~1.0.4",
+    "iron-a11y-keys": "PolymerElements/iron-a11y-keys#~1.0.4",
+    "platinum-sw": "PolymerElements/platinum-sw#~1.2.3"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
