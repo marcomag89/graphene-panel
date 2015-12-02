@@ -11,140 +11,111 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../activity-behavior/activity-behavior.html">
 <dom-module id="act-graphene-home">
+  <style>
+    .home-menu {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .menu-content {
+
+    }
+
+    .button iron-icon {
+      width: 80px;
+      height: 80px;
+      width: 120px;
+    }
+
+  </style>
   <template>
-    <style>
-      :host {
-        display: block;
-        --paper-input-container-color: #686868;
-        --paper-input-container-focus-color: #686868;
-        --paper-input-container-input-color: #686868;
-        --paper-input-container-invalid-color: #686868;
-      }
-
-      table {
-        margin-top: 20px;
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      td, th {
-        border: 1px solid gray;
-        padding: 8px;
-        word-wrap: break-word;
-      }
-
-      td.key {
-        font-weight: 500;
-        width: 150px;
-      }
-
-      div.spinner {
-        text-align: center;
-      }
-
-      #aclNotification {
-        /*background-color: gray;*/
-        padding: 10px;
-        color: var(--primary-text-color);
-        border-radius: 4px;
-        box-shadow: 2px 13px 13px -13px;
-        border: 3px solid var(--accent-color);
-
-      }
-
-    </style>
     <graphene-client id="client" on-status-change="_onStatusChange"></graphene-client>
-    <template is="dom-if" if="{{loaded}}">
-      <template is="dom-if" if="{{!aclEnabled}}">
-        <div id="aclNotification">
-          <h3>Acl is disabled</h3>
-          This is an open api!<br/>
-          you can enable acl launching autoconfig and creating an administrator
-          <paper-input
-            id="confUser"
-            type="text"
-            label="username"
-            error-message="Email is not valid"
-            required
-            ></paper-input>
-          <paper-input
-            id="confPasswd"
-            type="password"
-            label="password"
-            minlength="8"
-            error-message="Password length must be more then 8 chars"
-            required
-            ></paper-input>
+    <div class="home-menu">
+      <div class="menu-content">
 
-          <paper-button on-click="_sendConfig">Configure</paper-button>
+        <paper-button class="button" on-click="_toModules">
+          <iron-icon icon="settings-applications"></iron-icon>
+          <br/>
+          <app-locale text="GR_MODULES"></app-locale>
+        </paper-button>
 
-        </div>
-      </template>
+        <paper-button class="button">
+          <iron-icon icon="account-circle"></iron-icon>
+          <br/>
+          <app-locale text="GR_USERS"></app-locale>
+        </paper-button>
 
-      <h2>Application</h2>
-      <table>
-        <tr>
-          <td class="key">Name</td>
-          <td>{{status.app-name}}</td>
-        </tr>
-      </table>
+        <paper-button class="button">
+          <iron-icon icon="supervisor-account"></iron-icon>
+          <br/>
+          <app-locale text="GR_ACL"></app-locale>
+        </paper-button>
 
-      <h2>Server</h2>
-      <table>
-        <tr>
-          <td class="key">Graphene version</td>
-          <td>{{status.framework-version}}</td>
-        </tr>
-        <tr>
-          <td class="key">Graphene info</td>
-          <td>{{status.framework-infos}}</td>
-        </tr>
-        <tr>
-          <td class="key">Server time</td>
-          <td>{{status.server.time}}</td>
-        </tr>
-        <tr>
-          <td class="key">Server software</td>
-          <td>{{status.server.software}}</td>
-        </tr>
-        <tr>
-          <td class="key">PHP version</td>
-          <td>{{status.php-version}}</td>
-        </tr>
-      </table>
+      </div>
+    </div>
+    <h2>
+      <app-locale text="Application"></app-locale>
+    </h2>
+    <table>
+      <tr>
+        <td class="key">
+          <app-locale text="GR_APP_NAME_LABEL"></app-locale>
+        </td>
+        <td>{{status.app-name}}</td>
+      </tr>
+    </table>
 
-      <h2>Storage</h2>
-      <table>
-        <tr>
-          <td class="key">Driver</td>
-          <td>{{status.db.driver}}</td>
-        </tr>
-        <tr>
-          <td class="key">Status</td>
-          <td>{{status.db.connectionStatus}}</td>
-        </tr>
-      </table>
+    <h2>Server</h2>
+    <table>
+      <tr>
+        <td class="key">
+          <app-locale text="GR_GRAPHENE_VERSION_LABEL"></app-locale>
+        </td>
+        <td>{{status.framework-version}}</td>
+      </tr>
+      <tr>
+        <td class="key">
+          <app-locale text="GR_GRAPHENE_INFO_LABEL"></app-locale>
+        </td>
+        <td>{{status.framework-infos}}</td>
+      </tr>
+      <tr>
+        <td class="key">
+          <app-locale text="GR_SERVER_TIME_LABEL"></app-locale>
+        </td>
+        <td>{{status.server.time}}</td>
+      </tr>
+      <tr>
+        <td class="key">
+          <app-locale text="GR_SERVER_SOFTWARE_LABEL"></app-locale>
+        </td>
+        <td>{{status.server.software}}</td>
+      </tr>
+      <tr>
+        <td class="key">
+          <app-locale text="GR_PHP_VERSION_LABEL"></app-locale>
+        </td>
+        <td>{{status.php-version}}</td>
+      </tr>
+    </table>
 
-      <h2>Installed Modules</h2>
-      <table>
-        <tr>
-          <th>Name</th>
-          <th>Author</th>
-          <th>Version</th>
-        </tr>
-        <template is="dom-repeat" items="{{mods}}">
-          <tr>
-            <td><a href="/graphene/modules/{{item.name}}">
-              <span>{{item.name}}</span>&nbsp;(<span>{{item.namespace}}</span>)
-            </a></td>
-            <td>{{item.author}}</td>
-            <td>{{item.version}}</td>
-          </tr>
-        </template>
-      </table>
-      <h3>{{item.name}}</h3>
-    </template>
-
+    <h2>
+      <app-locale text="GR_STORAGE"></app-locale>
+    </h2>
+    <table>
+      <tr>
+        <td class="key">
+          <app-locale text="GR_STORAGE_DRIVER_LABEL"></app-locale>
+        </td>
+        <td>{{status.db.driver}}</td>
+      </tr>
+      <tr>
+        <td class="key">
+          <app-locale text="GR_STORAGE_STATUS_LABEL"></app-locale>
+        </td>
+        <td>{{status.db.connectionStatus}}</td>
+      </tr>
+    </table>
   </template>
   <script>
     (function () {
@@ -192,7 +163,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             console.log('invalid');
           }
         },
-
+        _toModules: function () {
+          page('/graphene/modules');
+        },
         _onStatusChange: function (e) {
           //this.status = e.detail;
           this.aclEnabled = e.detail.aclEnabled;

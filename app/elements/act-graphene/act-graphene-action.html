@@ -102,7 +102,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       Polymer({
         is: 'act-graphene-action',
         behaviors: [activityBehavior],
-
         onStart: function () {
           this.$.doc.setActionName(this.params.action);
         },
@@ -136,7 +135,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         settings: {
-          drawer: false
+          drawer: false,
         },
         properties: {
           doc: Object

@@ -1,34 +1,33 @@
+<link rel="import" href="graphene/graphene_it.html">
 <script>
-  var lang = {
-    APP_NAME: 'Graphene toolbox',
-    APP_DESCRIPTION: 'Graphene management system',
+  var lang = Object.assign(grapheneIt,
+    {
+      APP_NAME: 'Graphene toolbox',
+      APP_DESCRIPTION: 'Graphene management system',
 
-    /* Gestione activity */
-    ACT_NOT_FOUND_MSG: 'Pagina non trovata',
-    LOADING_ACTIVITY: 'Caricamento',
+      /* Gestione activity */
+      ACT_NOT_FOUND_MSG: 'Pagina non trovata',
+      LOADING_ACTIVITY: 'Caricamento',
 
-    /* Graphene */
-    ACT_GRAPHENE_HOME: 'Pannello di controllo',
-    ACT_GRAPHENE_MODULE: 'Modulo',
-    ACT_GRAPHENE_ACTION: 'Azione',
+      /* Login */
+      LOGIN: 'Accedi',
+      USERNAME: 'Nome utente',
+      PASSWORD: 'Password',
 
-    /* Login */
-    LOGIN: 'Accedi',
-    USERNAME: 'Nome utente',
-    PASSWORD: 'Password',
+      /* Roba CRUD */
+      CREATE: 'crea',
+      EDIT: 'Modifica',
+      SAVE: 'Salva',
+      DELETE: 'Elimina',
+      BACK: 'Annulla',
 
-    /* Roba CRUD */
-    CREATE: 'crea',
-    EDIT: 'Modifica',
-    SAVE: 'Salva',
-    DELETE: 'Elimina',
-    BACK: 'Annulla',
+      /* Home */
+      HOME: 'Home',
 
-    /* Home */
-    HOME: 'Home',
-
-    /* Utenti */
-    USERS: 'Utenti',
-    USER_USERNAME: 'Nome Utente'
-  }
+      /* Utenti */
+      USERS: 'Utenti',
+      USER_USERNAME: 'Nome Utente'
+    }
+  );
+  console.log(lang);
 </script>
