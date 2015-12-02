@@ -12,10 +12,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../activity-behavior/activity-behavior.html">
 
 <dom-module id="act-not-found">
+  <style>
+    :host {
+      text-align: center;
+      color: gray;
+    }
+
+    :host h1 {
+      margin-top: 20vh;
+      font-size: 10vh;
+    }
+  </style>
   <template>
     <h1>404</h1>
 
-    <p>not found</p>
+    <p>
+      <app-locale text="ACT_NOT_FOUND_MSG"></app-locale>
+    </p>
   </template>
   <script>
     (function () {
@@ -27,6 +40,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         onStart: function () {
           console.log('started');
           this.setReady();
+          if (this.params[0] !== '/') {
+            setTimeout(function () {
+              page('/');
+            }, 3000);
+          }
         },
         properties: {}
       });

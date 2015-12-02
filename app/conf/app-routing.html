@@ -1,26 +1,12 @@
+<link rel="import" href="graphene-configs.html">
 <script>
-  /**
-   * Created by Marco on 15/10/15.
-   */
-
-  var routing = [
-    {activity: 'act-graphene-home', file: 'elements/act-graphene/act-graphene-home.html', path: '/graphene/home'},
-    {
-      activity: 'act-graphene-module',
-      file: 'elements/act-graphene/act-graphene-module.html',
-      path: '/graphene/modules/:module'
-    },
-    {
-      activity: 'act-graphene-action',
-      file: 'elements/act-graphene/act-graphene-action.html',
-      path: '/graphene/modules/:module/:action'
-    },
+  var routing = grapheneConfigs.routing.concat([
 
     {path: '/:model/list', activity: 'act-list'}, // [users/list]
     {path: '/:model/:mode/:id', activity: 'act-crud'}, // [users/create/0, users/read/ID /users/update/ID]
 
     /*404 error*/
     {path: '*', activity: 'act-not-found'}
-  ];
 
+  ]);
 </script>

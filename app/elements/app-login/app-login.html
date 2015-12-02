@@ -45,7 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .app-title {
-        margin-top: 80px;
+        margin-top: 5vh;
         font-weight: 100;
         font-size: 50px;
         text-align: center;
@@ -66,16 +66,52 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         text-align: center;
         margin: 5px;
       }
+
+      @media screen and (max-width: 400px) {
+        .app-title {
+          font-size: 1.5em;
+        }
+
+        .app-title {
+          margin-top: 2px;
+          font-size: 1.5em;
+        }
+
+        .app-subtitle {
+          display: none;
+        }
+
+        .login-form {
+          max-width: 100%;
+          margin-top: 5px;
+          width: 70vw;
+          background-color: var(--light-primary-color);
+          color: var(--primary-text-color);
+          padding: 40px;
+        }
+
+        .no-narrow {
+          display: none;
+        }
+      }
+
     </style>
     <div>
-      <div class="app-title">{{title}}</div>
-      <div class="app-subtitle">{{subtitle}}</div>
-      <paper-material elevation="2" class="login-form">
+      <app-locale id="localizer" on-locale-ready="_localeReady"></app-locale>
+      <div class="app-title">
+        <app-locale text="APP_NAME"></app-locale>
+      </div>
+      <div class="app-subtitle">
+        <app-locale text="APP_DESCRIPTION"></app-locale>
+      </div>
+      <div class="login-form">
         <graphene-client id="client"></graphene-client>
-        <h2>login</h2>
+        <h2 class="no-narrow">
+          <app-locale text="login"></app-locale>
+        </h2>
         <paper-input
           id="userField"
-          label="username"
+          label="{{_localize('USERNAME',locale)}}"
           required
           error-message="invalid email address"
           >
@@ -83,7 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-input
           id="pwdField"
           type="password"
-          label="Password"
+          label="{{_localize('PASSWORD',locale)}}"
           minlength="8"
           error-message="invalid password"
           required
@@ -104,8 +140,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         attached: function () {
 
         },
+
         _enterPressed: function () {
           this._authenticate();
+        },
+
+        _localize: function (text, locale) {
+          return locale.translate(text);
+        },
+
+        _localeReady: function () {
+          this.locale = this.$.localizer;
         },
         _authenticate: function (e) {
           var user = this.$.userField;
@@ -142,6 +187,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         properties: {
+          locale: {type: Object, notify: true},
           title: String,
           username: String,
           password: String,

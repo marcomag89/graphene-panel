@@ -25,6 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var url = '../../locale/' + userLang + '.html';
           this.importHref([url], function () {
             this.lang = lang;
+            this.fire('locale-ready', this);
           }.bind(this));
         },
 
@@ -48,6 +49,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           } else {
             return '|';
           }
+        },
+
+        translate: function (text) {
+          return this._translate(text, this.lang, []);
         },
 
         properties: {

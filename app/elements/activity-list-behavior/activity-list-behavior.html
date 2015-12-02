@@ -20,8 +20,16 @@
         }.bind(this));
         this.fetcher.modelName = this._getModelName();
       }
+      this.importHref(['../../conf/list-config.html'], this._onConfigReady.bind(this), this._onConfigError.bind(this));
       this.fetcher.start();
       this.onStart();
+    },
+
+    _onConfigReady: function () {
+      this.config = actListConfig;
+    },
+    _onConfigError: function () {
+      this.config = {};
     },
 
     _onCollectionStatusChange: function (e) {
@@ -31,6 +39,7 @@
       }
     },
     _onCollectionResults: function (e) {
+
       this._getColumns();
       if (this._isContinuous()) {
         this.collectionItems = e.detail.continuousResults;
@@ -71,7 +80,7 @@
     },
 
     getFieldName: function (name) {
-      console.log(name);
+      //console.log(name);
       var nameTok = name.split('_');
       nameTok.splice(0, 1);
       return nameTok.join('_').toUpperCase();
@@ -87,6 +96,7 @@
           } else if (cols[col].endsWith('version')) {
             this.versionCol = cols[col];
           } else {
+            if (this._isVisibleColumn(cols[col]))
             tCols.push(cols[col]);
           }
         }
@@ -95,6 +105,18 @@
       return this.columns;
     },
 
+    _isVisibleColumn: function (column) {
+      var hasSettings = this.config.hasOwnProperty(this._getModelName());
+      if (!hasSettings) return true;
+      else {
+        var colSingle = column.toUpperCase().replace(this.config[this._getModelName()].model.toUpperCase() + '_', '');
+        var useHide = this.config[this._getModelName()].hasOwnProperty('hide');
+        var useShow = this.config[this._getModelName()].hasOwnProperty('show');
+        var inHide = (useHide && this.config[this._getModelName()].hide.indexOf(colSingle) !== -1);
+        var inShow = (useShow && this.config[this._getModelName()].show.indexOf(colSingle) !== -1);
+        return ((useHide && !inHide) || (!useHide)) && ((useShow && inShow) || (!useShow));
+      }
+    },
 
     _getIcon: function (itemName) {
       var name = this.getFieldName(itemName);
@@ -167,12 +189,12 @@
     _isCompletedCollection: function () {
       return this.collectionStatus === 'completed';
     },
+
     stop: function () {
       this.columns = null;
     },
 
     onParamsChange: function (pars) {
-
       if (!!this.fetcher && this._getModelName() !== this.fetcher.modelName) {
         this.unsetReady();
         console.log(this._getModelName());
@@ -180,10 +202,12 @@
         this.fetcher.modelName = this._getModelName();
       }
     },
+
     settings: {
       search: true,
       refresh: true
     },
+
     properties: {
       idCol: String,
       versionCol: String,

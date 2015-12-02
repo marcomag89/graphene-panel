@@ -1,19 +1,10 @@
+<link rel="import" href="graphene-configs.html">
 <script>
   /**
    * Created by Marco on 25/10/15.
    */
-  var menu = [
-    {name: 'Graphene', href: '/graphene/home', matches: 'graphene/(.*)', icon: 'build'},
-    {name: 'Users', href: '/users/list', matches: '/users/(.*)', icon: 'account-box'}
+  var menu = grapheneConfigs.menu.concat([
+    {name: 'Home', href: '/home', matches: 'home', icon: 'home'}
 
-    /*
-     {name:'Home',        href:'/',       matches:'/',                icon:'home'   },
-     {name:'Groups',  href:'/groups',       matches:'/groups(.*)',   icon:'group-work' },
-     {name:'Modules', href:'/modules',      matches:'/modules(.*)',  icon:'account-balance-wallet' },
-     */
-    //{name:'Modules', href:'/modules',      matches:'/actions(.*)',  icon:'account-balance-wallet' },
-    //{name:'Modules', href:'/modules',      matches:'/actions(.*)',  icon:'account-balance-wallet' }
-
-  ];
-
+  ]);
 </script>

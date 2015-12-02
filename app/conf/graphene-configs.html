@@ -1,0 +1,25 @@
+<script>
+  var grapheneConfigs = {
+    menu: [
+      {name: 'Graphene', href: '/graphene/home', matches: 'graphene/(.*)', icon: 'build'}
+    ],
+
+    routing: [
+      {
+        activity: 'act-graphene-home',
+        file: 'elements/act-graphene/act-graphene-home.html',
+        path: '/graphene/home'
+      },
+      {
+        activity: 'act-graphene-module',
+        file: 'elements/act-graphene/act-graphene-module.html',
+        path: '/graphene/modules/:module'
+      },
+      {
+        activity: 'act-graphene-action',
+        file: 'elements/act-graphene/act-graphene-action.html',
+        path: '/graphene/modules/:module/:action'
+      }
+    ]
+  }
+</script>
